@@ -1,0 +1,2149 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1">
+<style>html,body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>꽃이 피는 자리</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&display=swap">
+<style>
+:root{
+  --cream:#FFF7F1; --cream2:#FBEBE1; --cream3:#F5DCCF;
+  --blush:#F6C3CE; --blush2:#FBDEE3; --blush3:#FDEFF1;
+  --rose:#D2708B; --rose2:#B8546F; --rose3:#8E3A54;
+  --plum:#5F3D48; --plum2:#8C6C76; --plum3:#B49AA1;
+  --gold:#E3AC55; --gold2:#F7E0B4;
+  --aqua:#7FC2D4; --aqua2:#BEE7EE;
+  --danger:#D93A3A; --danger2:#FBE3E3;
+  --line:#EEDBD2; --white:#FFFDFB; --ink:#4A2F38;
+  --sh1:0 2px 10px rgba(126,79,92,.10);
+  --sh2:0 10px 30px rgba(126,79,92,.16);
+  --sh3:0 18px 50px rgba(126,79,92,.22);
+  --fdisp:'Gowun Batang','Apple SD Gothic Neo','Noto Serif KR',serif;
+  --fbody:'Gowun Dodum','Apple SD Gothic Neo','Noto Sans KR',system-ui,sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:var(--fbody);color:var(--plum);
+  background:radial-gradient(120% 90% at 50% 0%,#FFEDE6 0%,#F6E2DA 45%,#EDD5CE 100%);
+  min-height:100dvh;display:flex;align-items:center;justify-content:center;overflow:hidden}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+.hide{display:none!important}
+
+#stage{position:relative;width:min(430px,100vw);height:min(100dvh,920px);
+  background:#A7D291;overflow:hidden;border-radius:34px;box-shadow:var(--sh3);
+  user-select:none;touch-action:none}
+@media (max-width:520px){#stage{border-radius:0;height:100dvh;width:100vw}}
+#world{position:absolute;inset:0;display:block;touch-action:none}
+
+#girl{position:absolute;width:96px;pointer-events:none;z-index:3;
+  filter:drop-shadow(0 6px 10px rgba(80,70,50,.22));transform:translate(-50%,-100%)}
+#can{position:absolute;width:104px;pointer-events:none;opacity:0;z-index:6;
+  transform-origin:78% 74%;transition:opacity .2s ease;
+  filter:drop-shadow(0 6px 10px rgba(80,70,50,.28))}
+#can.on{opacity:1}
+#ring{position:absolute;width:92px;height:92px;margin:-46px 0 0 -46px;border-radius:50%;
+  border:2.5px solid var(--rose);pointer-events:none;opacity:0;z-index:19;transition:opacity .3s ease}
+#ring.on{opacity:.9;animation:pulse 1.7s ease-out infinite}
+@keyframes pulse{0%{transform:scale(.6);opacity:.9}70%{transform:scale(1.14);opacity:.12}100%{transform:scale(1.14);opacity:0}}
+
+/* ── HUD ─────────────────────────────────────────────── */
+#hud{position:absolute;top:0;left:0;right:0;padding:12px 12px 0;z-index:8;
+  display:flex;gap:6px;align-items:flex-start;flex-wrap:wrap}
+.chip{background:rgba(255,253,251,.92);backdrop-filter:blur(8px);border:1px solid var(--line);
+  border-radius:999px;padding:6px 11px;font-size:12px;display:flex;align-items:center;gap:5px;
+  box-shadow:var(--sh1);white-space:nowrap}
+.chip b{font-family:var(--fdisp);font-weight:700;font-variant-numeric:tabular-nums;color:var(--rose2)}
+.chip .ic{width:15px;height:15px;flex:none}
+#lvChip{flex-direction:column;align-items:stretch;gap:4px;padding:7px 12px 8px}
+#lvRow{display:flex;align-items:center;gap:5px;font-size:12px}
+#xpBar{width:72px;height:5px;border-radius:99px;background:var(--cream3);overflow:hidden}
+#xpBar i{display:block;height:100%;width:0;border-radius:99px;
+  background:linear-gradient(90deg,var(--blush),var(--rose));transition:width .45s ease}
+.spacer{flex:1}
+#waterChip{transition:.3s}
+#waterMini{width:38px;height:6px;border-radius:99px;background:var(--cream3);overflow:hidden}
+#waterMini i{display:block;height:100%;background:linear-gradient(90deg,var(--aqua),var(--aqua2));transition:width .3s,background .3s}
+#waterChip.low{background:var(--danger2);border-color:#F3B4B4;animation:lowpulse 1.1s ease-in-out infinite}
+#waterChip.low #waterMini{background:#F3CACA}
+#waterChip.low #waterMini i{background:linear-gradient(90deg,#D93A3A,#F07070)}
+#waterChip.low .drop path:first-child{fill:#D93A3A}
+#waterChip.low b{color:var(--danger)}
+@keyframes lowpulse{0%,100%{box-shadow:0 0 0 0 rgba(217,58,58,.35)}50%{box-shadow:0 0 0 6px rgba(217,58,58,0)}}
+
+#zoomBox{position:absolute;right:12px;top:64px;z-index:8;display:flex;flex-direction:column;gap:6px;align-items:flex-end}
+.zbtn{width:38px;height:38px;border-radius:13px;background:rgba(255,253,251,.94);border:1px solid var(--line);
+  box-shadow:var(--sh1);display:flex;align-items:center;justify-content:center;font-size:17px;color:var(--rose2);position:relative}
+.zbtn.big{font-size:19px;margin-bottom:0}
+.zbtn i{position:absolute;bottom:-3px;right:-4px;background:var(--rose);color:#fff;border-radius:999px;
+  font-style:normal;font-size:9.5px;font-weight:700;padding:1px 5px;font-variant-numeric:tabular-nums;
+  box-shadow:0 1px 4px rgba(140,60,80,.35)}
+.zbtn:active{transform:scale(.94)}
+#zoomBox .zbtn:nth-child(3){margin-top:10px}
+
+#stepTag{position:absolute;top:60px;left:50%;transform:translateX(-50%);z-index:9;
+  background:var(--plum);color:#FFF3EC;border-radius:999px;padding:7px 15px;font-size:12px;
+  box-shadow:var(--sh2);opacity:0;transition:opacity .35s ease;max-width:72%;text-align:center;
+  word-break:keep-all;line-height:1.4}
+#stepTag.on{opacity:.95}
+#toast{position:absolute;left:50%;bottom:190px;transform:translateX(-50%) translateY(8px);z-index:22;
+  background:var(--plum);color:#FFF3EC;border-radius:999px;padding:9px 18px;font-size:12.5px;
+  box-shadow:var(--sh2);opacity:0;transition:.3s ease;pointer-events:none;
+  max-width:86%;text-align:center;word-break:keep-all;line-height:1.45}
+#toast.on{opacity:.96;transform:translateX(-50%)}
+#warn{position:absolute;left:50%;top:52%;transform:translate(-50%,-50%) scale(.9);z-index:23;
+  background:rgba(217,58,58,.96);color:#fff;border-radius:20px;padding:16px 26px;
+  font-size:19px;font-weight:700;letter-spacing:-.01em;box-shadow:0 12px 34px rgba(160,30,30,.4);
+  opacity:0;transition:.28s cubic-bezier(.2,.9,.3,1);pointer-events:none;text-align:center;
+  border:2px solid #fff;line-height:1.4}
+#warn small{display:block;font-size:13px;font-weight:400;opacity:.94;margin-top:5px}
+#warn.on{opacity:1;transform:translate(-50%,-50%) scale(1)}
+
+/* ── panel ───────────────────────────────────────────── */
+#panel{position:absolute;left:0;right:0;bottom:0;z-index:10;
+  background:linear-gradient(180deg,rgba(255,247,241,.94),var(--cream));
+  backdrop-filter:blur(10px);border-top:1px solid var(--line);
+  border-radius:24px 24px 0 0;padding:10px 12px calc(10px + env(safe-area-inset-bottom));
+  box-shadow:0 -8px 26px rgba(120,70,85,.14);transform:translateY(105%);
+  transition:transform .4s cubic-bezier(.2,.9,.3,1)}
+#panel.on{transform:none}
+#seedRow{display:flex;gap:7px;align-items:stretch;margin-bottom:9px}
+#seedSlot{flex:1;display:flex;align-items:center;gap:9px;background:var(--white);border:1.5px solid var(--line);
+  border-radius:16px;padding:6px 10px 6px 8px;min-width:0}
+#seedSlot svg{width:38px;height:38px;flex:none}
+#seedSlot .t{min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:1px;text-align:left}
+#seedSlot .k{font-size:13px;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;display:flex;align-items:center;gap:5px}
+#seedSlot .s{font-size:10px;color:var(--plum3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+#seedSlot .ch{margin-left:auto;font-size:11px;color:var(--rose2);flex:none}
+.mini{background:var(--white);border:1.5px solid var(--blush);border-radius:14px;padding:7px 10px;
+  font-size:11px;color:var(--rose2);line-height:1.25;text-align:center;box-shadow:var(--sh1);flex:none}
+.mini:active{transform:scale(.96)}
+.mini b{display:block;font-size:13.5px}
+#tools{display:flex;gap:6px}
+.tool{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 2px 8px;
+  border-radius:16px;font-size:11px;color:var(--plum2);border:1.5px solid transparent;transition:.16s}
+.tool svg{width:24px;height:24px;display:block}
+.tool.sel{background:var(--blush3);border-color:var(--blush);color:var(--rose2);font-weight:700}
+.tool:active{transform:scale(.96)}
+
+/* ── rarity chips ────────────────────────────────────── */
+.rr{display:inline-flex;align-items:center;border-radius:999px;padding:1px 7px;font-size:9.5px;
+  font-weight:700;letter-spacing:.04em;line-height:1.6;flex:none}
+
+/* ── screens ─────────────────────────────────────────── */
+.screen{position:absolute;inset:0;z-index:16;background:var(--cream);overflow:auto;
+  padding:18px 14px 26px;opacity:0;pointer-events:none;transform:translateY(10px);transition:.28s ease;
+  -webkit-overflow-scrolling:touch}
+.screen.on{opacity:1;pointer-events:auto;transform:none}
+.screenHead{text-align:center;margin-bottom:12px;position:relative}
+.screenHead h2{font-family:var(--fdisp);font-weight:700;font-size:21px;margin:2px 0 4px;color:var(--ink)}
+.screenHead p{margin:0;font-size:12.5px;color:var(--plum2)}
+.eyebrow{font-size:10.5px;letter-spacing:.22em;color:var(--gold)}
+.xbtn{position:absolute;right:-2px;top:0;width:34px;height:34px;border-radius:50%;
+  background:var(--white);border:1px solid var(--line);box-shadow:var(--sh1);font-size:16px;color:var(--plum2)}
+.filters{display:flex;gap:5px;justify-content:center;flex-wrap:wrap;margin:10px 0 12px}
+.filt{border:1.5px solid var(--line);background:var(--white);border-radius:999px;padding:5px 11px;font-size:11px;color:var(--plum2)}
+.filt.sel{border-color:var(--rose);background:var(--blush3);color:var(--rose2);font-weight:700}
+
+#dexGrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.dex{background:var(--white);border:1px solid var(--line);border-radius:15px;padding:6px 3px 7px;text-align:center;box-shadow:var(--sh1)}
+.dex svg{width:100%;height:66px;display:block}
+.dex .nm{font-size:10.5px;margin-top:2px;color:var(--ink);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dex .no{font-size:8.5px;color:var(--plum3);font-variant-numeric:tabular-nums}
+.dex.lock{background:#F6EBE5;box-shadow:none}
+.dex.lock svg{opacity:.15;filter:grayscale(1)}
+.dex.lock .nm{color:var(--plum3);font-weight:400}
+#dexBar{height:7px;border-radius:999px;background:var(--cream3);overflow:hidden;margin:8px 0 4px}
+#dexBar i{display:block;height:100%;background:linear-gradient(90deg,var(--blush),var(--rose));border-radius:999px;transition:width .5s ease}
+
+/* ── shop ────────────────────────────────────────────── */
+#shopTop{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:6px}
+.sect{margin:16px 0 8px;display:flex;align-items:baseline;gap:8px}
+.sect h3{font-family:var(--fdisp);font-weight:700;font-size:15px;margin:0;color:var(--ink)}
+.sect span{font-size:11px;color:var(--plum3)}
+#rotTimer{margin-left:auto;font-size:11.5px;color:var(--rose2);font-variant-numeric:tabular-nums;
+  background:var(--blush3);border-radius:999px;padding:3px 10px}
+.shopGrid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.item{background:var(--white);border:1.5px solid var(--line);border-radius:18px;padding:9px 9px 10px;
+  box-shadow:var(--sh1);display:flex;gap:8px;align-items:center;position:relative;text-align:left}
+.item svg{width:52px;height:52px;flex:none}
+.item .info{min-width:0;flex:1;display:flex;flex-direction:column;gap:2px}
+.item .nm{font-size:12.5px;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item .meta{font-size:10px;color:var(--plum3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item .price{font-size:12px;color:var(--gold);font-weight:700;font-variant-numeric:tabular-nums;display:flex;align-items:center;gap:3px}
+.item .own{position:absolute;right:8px;top:7px;font-size:9.5px;color:var(--plum3)}
+.item.special{border-color:var(--gold2);background:linear-gradient(160deg,#FFFDF7,#FDF3E2)}
+.item.locked{opacity:.55}
+.item .need{font-size:10px;color:var(--danger);font-weight:700}
+.item:active{transform:scale(.98)}
+
+/* ── overlays ────────────────────────────────────────── */
+.overlay{position:absolute;inset:0;z-index:20;background:rgba(74,47,56,.34);backdrop-filter:blur(3px);
+  opacity:0;pointer-events:none;transition:.3s ease}
+.overlay.on{opacity:1;pointer-events:auto}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:var(--cream);border-radius:28px 28px 0 0;
+  padding:20px 16px calc(20px + env(safe-area-inset-bottom));box-shadow:0 -14px 40px rgba(120,70,85,.24);
+  transform:translateY(100%);transition:.38s cubic-bezier(.2,.9,.3,1);max-height:82%;overflow:auto}
+.overlay.on .sheet{transform:none}
+.sheetTitle{font-family:var(--fdisp);font-weight:700;font-size:19px;color:var(--ink);text-align:center}
+.sheetSub{font-size:12.5px;color:var(--plum2);text-align:center;margin:5px 0 15px}
+#seedList{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.seed{background:var(--white);border:1.5px solid var(--line);border-radius:17px;padding:8px 4px 9px;
+  text-align:center;position:relative;overflow:hidden;transition:.16s}
+.seed:active{transform:scale(.97)}
+.seed.sel{border-color:var(--rose);box-shadow:0 0 0 3px var(--blush3)}
+.seed svg{width:100%;height:54px;display:block}
+.seed .nm{font-size:11.5px;margin-top:3px;color:var(--ink);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.seed .cnt{font-size:10px;color:var(--rose2);font-variant-numeric:tabular-nums}
+.seed .rr{position:absolute;top:5px;left:5px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  background:linear-gradient(180deg,var(--rose),var(--rose2));color:#FFF7F3;border-radius:999px;
+  padding:13px 26px;font-size:15px;box-shadow:0 6px 16px rgba(178,84,111,.34);transition:.12s}
+.btn:active{transform:translateY(2px) scale(.985)}
+.btn.ghost{background:var(--white);color:var(--rose2);border:1.5px solid var(--blush);box-shadow:var(--sh1)}
+.btn:disabled{opacity:.45}
+
+#cardOv{z-index:24}
+#card{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) scale(.86);width:292px;
+  background:linear-gradient(175deg,#FFFDFB,#FDF1EB);border:1px solid var(--line);border-radius:26px;
+  padding:20px 20px 18px;text-align:center;box-shadow:0 26px 60px rgba(110,60,75,.34);
+  opacity:0;transition:.45s cubic-bezier(.2,.9,.3,1)}
+#cardOv.on #card{opacity:1;transform:translate(-50%,-50%) scale(1)}
+#card:before{content:"";position:absolute;inset:8px;border:1px solid var(--blush2);border-radius:19px;pointer-events:none}
+#cardArt{width:136px;height:136px;margin:0 auto;display:block}
+#cardKo{font-family:var(--fdisp);font-weight:700;font-size:23px;color:var(--ink);margin-top:4px}
+#cardLa{font-size:11px;font-style:italic;color:var(--plum3);letter-spacing:.04em;margin-top:2px}
+#cardMean{font-size:13px;color:var(--rose2);margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
+
+#confirmOv{z-index:25}
+#confirm{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) scale(.9);width:280px;
+  background:var(--white);border-radius:24px;padding:22px 20px 18px;text-align:center;
+  box-shadow:0 22px 50px rgba(110,60,75,.3);opacity:0;transition:.3s cubic-bezier(.2,.9,.3,1)}
+#confirmOv.on #confirm{opacity:1;transform:translate(-50%,-50%) scale(1)}
+#cfTitle{font-family:var(--fdisp);font-weight:700;font-size:18px;color:var(--ink)}
+#cfBody{font-size:13px;color:var(--plum2);margin:9px 0 16px;line-height:1.6;word-break:keep-all}
+#cfBody b{color:var(--gold);font-variant-numeric:tabular-nums}
+.cfRow{display:flex;gap:8px;justify-content:center}
+.qtyRow{display:flex;align-items:center;justify-content:center;gap:16px;margin:4px 0 12px}
+.qtyBtn{width:34px;height:34px;border-radius:12px;background:var(--cream2,#F6ECE4);border:1px solid var(--line);
+  font-size:17px;color:var(--rose2);display:flex;align-items:center;justify-content:center}
+.qtyBtn:active{transform:scale(.94)}
+.qtyBtn:disabled{opacity:.35}
+.qtyNum{font-size:18px;font-weight:700;color:var(--ink);min-width:2.4em;font-variant-numeric:tabular-nums}
+
+#dlg{position:absolute;left:12px;right:12px;bottom:12px;z-index:14;
+  background:var(--white);border:1px solid var(--line);border-radius:24px;padding:16px 18px 16px 76px;
+  box-shadow:var(--sh2);transform:translateY(18px);opacity:0;pointer-events:none;transition:.32s cubic-bezier(.2,.9,.3,1)}
+#dlg.on{transform:none;opacity:1;pointer-events:auto}
+#dlgFace{position:absolute;left:14px;top:-16px;width:52px;height:66px;overflow:hidden;border-radius:26px 26px 22px 22px;
+  background:linear-gradient(180deg,#FFE9EE,#FBDDE3);border:1px solid var(--line)}
+#dlgFace svg{width:104px;margin-left:-26px;margin-top:-4px}
+#dlgName{font-family:var(--fdisp);font-weight:700;font-size:13px;color:var(--rose2);margin-bottom:4px}
+#dlgText{font-size:14.5px;line-height:1.62;color:var(--ink);min-height:2.9em;word-break:keep-all}
+#dlgNext{position:absolute;right:16px;bottom:11px;font-size:11px;color:var(--plum3);animation:blink 1.4s infinite}
+@keyframes blink{0%,100%{opacity:.3}50%{opacity:1}}
+
+#title{position:absolute;inset:0;z-index:30;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;background:linear-gradient(180deg,#FFE9E1 0%,#FFF4EE 46%,#F8E4D8 100%);
+  transition:opacity .7s ease}
+#title.out{opacity:0;pointer-events:none}
+#titleArt{width:230px;height:190px;margin-bottom:-6px}
+#title h1{font-family:var(--fdisp);font-weight:700;font-size:37px;color:var(--rose3);margin:0;
+  text-shadow:0 2px 0 rgba(255,255,255,.8)}
+#title .sub{font-size:12px;letter-spacing:.3em;color:var(--plum2);margin:8px 0 28px}
+#title .ver{position:absolute;bottom:22px;font-size:10.5px;color:var(--plum3);letter-spacing:.06em;text-align:center;line-height:1.6}
+.petalFall{position:absolute;top:-20px;pointer-events:none;opacity:.7}
+
+@media (prefers-reduced-motion:reduce){*{animation-duration:.001ms!important;animation-iteration-count:1!important}}
+</style>
+
+<div id="stage">
+  <canvas id="world"></canvas>
+  <svg id="girl" viewBox="0 0 120 190" aria-hidden="true"></svg>
+  <svg id="can" viewBox="0 0 120 100" aria-hidden="true"></svg>
+  <div id="ring"></div>
+
+  <div id="hud">
+    <div class="chip" id="lvChip">
+      <div id="lvRow"><span>레벨</span><b id="lvN">1</b><span style="color:var(--plum3);font-size:10.5px" id="lvSub">밭 16칸</span></div>
+      <div id="xpBar"><i></i></div>
+    </div>
+    <div class="spacer"></div>
+    <div class="chip"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="#F0C25C"/><circle cx="12" cy="12" r="6" fill="#E0A733"/><path d="M12 8v8M9.5 10h5M9.5 14h5" stroke="#FBE6B4" stroke-width="1.6" stroke-linecap="round"/></svg><b id="coinN">0</b></div>
+    <div class="chip" id="waterChip"><svg class="ic drop" viewBox="0 0 24 24"><path d="M12 3c4 5 6 7.6 6 10a6 6 0 0 1-12 0c0-2.4 2-5 6-10z" fill="#8FCADB"/><path d="M10 13a2.6 2.6 0 0 0 2 4" stroke="#EAF7FB" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg><div id="waterMini"><i style="width:100%"></i></div></div>
+  </div>
+
+  <div id="zoomBox">
+    <button class="zbtn big" id="shopBtn">🛒</button>
+    <button class="zbtn big" id="dexBtn">🌼<i id="dexN">0</i></button>
+    <button class="zbtn" id="zIn">＋</button>
+    <button class="zbtn" id="zOut">－</button>
+  </div>
+
+  <div id="stepTag"></div>
+  <div id="toast"></div>
+  <div id="warn"></div>
+
+  <div id="panel">
+    <div id="seedRow">
+      <button id="seedSlot"><svg id="seedArt" viewBox="-90 -90 180 180" aria-hidden="true"></svg>
+        <span class="t"><span class="k"><span id="seedKo">튤립</span><span class="rr" id="seedRr"></span></span>
+        <span class="s" id="seedLa">보유 0개</span></span>
+        <span class="ch">바꾸기 ▸</span></button>
+      <button class="mini" id="btnAll">일괄<b>심기</b></button>
+      <button class="mini" id="btnRain">모두<b>물주기</b></button>
+    </div>
+    <div id="tools">
+      <button class="tool" id="toolHand" data-t="hand"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11V5.5a1.5 1.5 0 0 1 3 0V11m0-.5V4.5a1.5 1.5 0 0 1 3 0V11m0-.5a1.5 1.5 0 0 1 3 0V15a6 6 0 0 1-6 6h-1a6 6 0 0 1-6-6v-3a1.5 1.5 0 0 1 3 0"/></svg>이동</button>
+      <button class="tool" id="toolSeed" data-t="seed"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20c0-4 2-7 6-8-1 5-3 8-6 8Z"/><path d="M12 20c0-4-2-7-6-8 1 5 3 8 6 8Z"/><path d="M12 20v-3"/></svg>씨앗</button>
+      <button class="tool" id="toolWater" data-t="water"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c4 5 6 7.6 6 10a6 6 0 0 1-12 0c0-2.4 2-5 6-10z"/><path d="M10 13.5a2.6 2.6 0 0 0 2 4"/></svg>물주기</button>
+      <button class="tool" id="toolCut" data-t="cut"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="18" r="2.6"/><circle cx="18" cy="18" r="2.6"/><path d="M7.8 16.2 18 4M16.2 16.2 6 4"/></svg>수확</button>
+    </div>
+  </div>
+
+  <div class="screen" id="shopScreen">
+    <div class="screenHead"><div class="eyebrow">SEED SHOP</div><h2>씨앗 상점</h2>
+      <p>레벨이 오르면 더 귀한 씨앗을 살 수 있어요</p><button class="xbtn" id="shopClose">✕</button></div>
+    <div id="shopTop"><div class="chip"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="#F0C25C"/><circle cx="12" cy="12" r="6" fill="#E0A733"/></svg><b id="shopCoin">0</b></div>
+      <div class="chip">레벨 <b id="shopLv">1</b></div></div>
+    <div class="sect"><h3>특별 씨앗</h3><span>5종</span><div id="rotTimer">10:00</div></div>
+    <div class="shopGrid" id="shopSpecial"></div>
+    <div class="sect"><h3>상시 판매</h3><span>30종</span></div>
+    <div class="shopGrid" id="shopStaple"></div>
+  </div>
+
+  <div class="screen" id="dexScreen">
+    <div class="screenHead"><div class="eyebrow">FLOWER INDEX</div><h2>꽃 도감</h2>
+      <p>100종의 꽃을 모두 피워보세요</p><button class="xbtn" id="dexClose">✕</button></div>
+    <div id="dexBar"><i style="width:0%"></i></div>
+    <div class="filters" id="dexFilters"></div>
+    <div id="dexGrid"></div>
+  </div>
+
+  <div class="overlay" id="seedOv"><div class="sheet">
+    <div class="sheetTitle">씨앗 고르기</div>
+    <div class="sheetSub" id="seedSub">고른 씨앗을 밭 위에 드래그해서 뿌려요</div>
+    <div id="seedList"></div>
+    <div style="display:flex;justify-content:center;gap:8px;margin-top:16px">
+      <button class="btn ghost" id="seedShop">상점 열기</button>
+      <button class="btn" id="seedGo">이 씨앗 담기</button></div>
+  </div></div>
+
+  <div class="overlay" id="cardOv"><div id="card">
+    <div class="eyebrow">NEW FLOWER</div>
+    <svg id="cardArt" viewBox="-90 -90 180 180" aria-hidden="true"></svg>
+    <div id="cardKo"></div><div id="cardLa"></div><div id="cardMean"></div>
+    <div style="margin-top:15px"><button class="btn" id="cardOk">도감에 담기</button></div>
+  </div></div>
+
+  <div class="overlay" id="confirmOv"><div id="confirm">
+    <div id="cfTitle"></div><div id="cfBody"></div>
+    <div class="cfRow"><button class="btn ghost" id="cfNo">취소</button><button class="btn" id="cfYes">확인</button></div>
+  </div></div>
+
+  <div id="dlg">
+    <div id="dlgFace"><svg viewBox="0 0 120 190" id="faceSvg"></svg></div>
+    <div id="dlgName">하린</div><div id="dlgText"></div><div id="dlgNext">탭</div>
+  </div>
+
+  <div id="title">
+    <svg id="titleArt" viewBox="0 0 230 190" aria-hidden="true"></svg>
+    <h1>꽃이 피는 자리</h1>
+    <div class="sub">A QUIET GARDEN</div>
+    <button class="btn" id="startBtn">밭으로 나가기</button>
+    <div class="ver">프로토타입 v0.3 · 꽃 100종 · 씨앗 상점<br>세로형 모바일 웹</div>
+  </div>
+</div>
+<script>
+/* ══════════════════════════════════════════════════════════
+   FLORA — parametric vector flower engine
+   petals are sampled as outlines, smoothed with Catmull-Rom,
+   then filled with 3-stop gradients + veins + edge light.
+   ══════════════════════════════════════════════════════════ */
+const F = (n)=> Math.round(n*100)/100;
+let UID = 0;
+
+function hex2rgb(h){h=h.replace('#','');return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)];}
+function rgb2hex(a){return '#'+a.map(v=>Math.max(0,Math.min(255,Math.round(v))).toString(16).padStart(2,'0')).join('');}
+function mix(a,b,t){const A=hex2rgb(a),B=hex2rgb(b);return rgb2hex([0,1,2].map(i=>A[i]+(B[i]-A[i])*t));}
+const tint=(c,t)=>mix(c,'#ffffff',t);
+const shade=(c,t)=>mix(c,'#4a2733',t);
+
+/* deterministic pseudo-random so a species always looks the same */
+function rng(seed){let s=seed*9301+49297;return ()=>{s=(s*9301+49297)%233280;return s/233280;};}
+
+function smooth(pts,closed){
+  const n=pts.length, get=i=>pts[(i%n+n)%n];
+  let d=`M${F(pts[0][0])} ${F(pts[0][1])}`;
+  const last=closed?n:n-1;
+  for(let i=0;i<last;i++){
+    const p0=closed?get(i-1):pts[Math.max(i-1,0)], p1=pts[i],
+          p2=closed?get(i+1):pts[Math.min(i+1,n-1)], p3=closed?get(i+2):pts[Math.min(i+2,n-1)];
+    d+=`C${F(p1[0]+(p2[0]-p0[0])/6)} ${F(p1[1]+(p2[1]-p0[1])/6)},`
+     + `${F(p2[0]-(p3[0]-p1[0])/6)} ${F(p2[1]-(p3[1]-p1[1])/6)},`
+     + `${F(p2[0])} ${F(p2[1])}`;
+  }
+  return d+(closed?'Z':'');
+}
+
+function profile(name,t){
+  switch(name){
+    case 'ovate':   return Math.pow(Math.sin(Math.PI*Math.pow(t,.86)),.80);
+    case 'obovate': return Math.pow(Math.sin(Math.PI*Math.pow(t,1.40)),.72);
+    case 'lance':   return Math.pow(Math.sin(Math.PI*Math.pow(t,.58)),.92);
+    case 'even':    return Math.pow(Math.sin(Math.PI*t),.26);
+    case 'wide':    return Math.pow(Math.sin(Math.PI*Math.pow(t,1.12)),.52);
+    case 'drop':    return Math.pow(Math.sin(Math.PI*Math.pow(t,1.7)),.62);
+    default:        return Math.pow(Math.sin(Math.PI*t),.7);
+  }
+}
+
+/* one petal outline, pointing up (-y), base at origin */
+function petalPath(L,W,shape,prof,curl){
+  const N=24, half=W/2, pts=[];
+  const bend=t=>curl*L*t*t;
+  const edge=t=>{
+    let w;
+    if(shape==='notch') w = half*(Math.pow(Math.sin(Math.PI*Math.pow(t,.8)),.7)*.86 + .40*Math.pow(t,2.1));
+    else w = half*profile(prof,t);
+    if(shape==='frill')  w *= 1+.115*Math.sin(t*Math.PI*7);
+    if(shape==='ruffle') w *= 1+.075*Math.sin(t*Math.PI*13);
+    if(shape==='fringe'&&t>.66) w *= 1+.16*Math.sin((t-.66)*Math.PI*20);
+    if(shape==='claw'&&t<.28)  w *= .32+.68*(t/.28);
+    if(shape==='quill') w *= .55;
+    return w;
+  };
+  for(let i=0;i<=N;i++){const t=i/N;pts.push([bend(t)+edge(t),-L*t]);}
+  if(shape==='notch') pts.push([bend(1)*.5,-L*.83]);
+  for(let i=N;i>=0;i--){const t=i/N;pts.push([bend(t)-edge(t),-L*t]);}
+  return smooth(pts,true);
+}
+
+function veins(L,W,shape,curl,n){
+  let d='';
+  for(let i=0;i<n;i++){
+    const s=(n===1)?0:(i/(n-1)*2-1);
+    const off=s*W*.24;
+    d+=`M0 ${F(-L*.06)} Q${F(off*1.5+curl*L*.25)} ${F(-L*.5)} ${F(off*.5+curl*L)} ${F(-L*.87)}`;
+  }
+  return d;
+}
+
+/* ── flower head ───────────────────────────────────────── */
+function headSVG(sp,bloom){
+  const id='f'+(UID++), b=bloom===undefined?1:bloom;
+  const C=sp.col, defs=[], body=[];
+  defs.push(`<radialGradient id="${id}gl" cx="50%" cy="50%"><stop offset="0%" stop-color="${tint(C[2],.55)}" stop-opacity=".55"/><stop offset="100%" stop-color="${C[1]}" stop-opacity="0"/></radialGradient>`);
+
+  sp.head.layers.forEach((ly,li)=>{
+    const base = C[ly.c===undefined?1:ly.c];
+    const deep = ly.deep||shade(base,ly.dk===undefined?.20:ly.dk);
+    const lite = ly.lite||tint(base,ly.lt===undefined?.34:ly.lt);
+    const mid  = base;
+    const inv  = ly.dir==='in';
+    defs.push(`<linearGradient id="${id}p${li}" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0%" stop-color="${inv?lite:deep}"/>
+      <stop offset="42%" stop-color="${mid}"/>
+      <stop offset="100%" stop-color="${inv?deep:lite}"/></linearGradient>`);
+    defs.push(`<linearGradient id="${id}s${li}" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="55%" stop-color="#ffffff" stop-opacity=".34"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/></linearGradient>`);
+
+    const n=ly.n, arc=ly.arc===undefined?360:ly.arc, rot=ly.rot||0;
+    const d=petalPath(ly.L,ly.W,ly.shape,ly.prof,ly.curl||0);
+    const vn=(ly.L>26&&n<=14)?veins(ly.L,ly.W,ly.shape,ly.curl||0,3):null;
+    const R=rng((li+1)*37+n);
+    const sy=ly.tilt===undefined?1:ly.tilt;
+    const petals=[];
+    for(let i=0;i<n;i++){
+      const a = rot + (arc>=360 ? i*360/n : (n===1?0:(-arc/2+arc*i/(n-1))));
+      const jit=(R()-.5)*(ly.jit===undefined?5:ly.jit);
+      const sc=(ly.sc||1)*(1+(R()-.5)*.10);
+      const br=1+(R()-.5)*.10;
+      const bs=.12+.88*b, ba=(a+jit)-26*(1-b);
+      petals.push(`<g class="pt" data-a="${F(a+jit)}" data-s="${F(sc)}" data-i="${li*10+i}" transform="rotate(${F(ba)}) scale(${F(sc*bs)})" style="filter:brightness(${F(br)})">
+        <path d="${d}" fill="url(#${id}p${li})" stroke="${tint(lite,.35)}" stroke-width=".7" stroke-opacity=".55"/>
+        ${vn?`<path d="${vn}" fill="none" stroke="${shade(base,.30)}" stroke-width=".55" stroke-opacity=".22"/>`:''}
+        <path d="${d}" fill="url(#${id}s${li})" opacity=".5"/>
+      </g>`);
+    }
+    body.push(`<g transform="translate(0 ${F(ly.dy||0)}) scale(1 ${F(sy)})" opacity="${ly.op===undefined?1:ly.op}">${petals.join('')}</g>`);
+  });
+
+  body.push(centerSVG(sp,id,defs));
+  return {defs:defs.join(''),body:body.join(''),id};
+}
+
+function centerSVG(sp,id,defs){
+  const c=sp.head.center||{type:'none'}, C=sp.ctr||['#F4DFA4','#C79A44'];
+  const r=c.r||10;
+  if(c.type==='none') return '';
+  if(c.type==='disc'){
+    defs.push(`<radialGradient id="${id}d" cx="42%" cy="38%"><stop offset="0%" stop-color="${tint(C[0],.30)}"/><stop offset="58%" stop-color="${C[0]}"/><stop offset="100%" stop-color="${C[1]}"/></radialGradient>`);
+    let dots='';const R=rng(11);
+    const k=c.dots===undefined?46:c.dots;
+    for(let i=0;i<k;i++){
+      const f=Math.sqrt(i/k)*r*.92, th=i*2.3999632;
+      dots+=`<circle cx="${F(Math.cos(th)*f)}" cy="${F(Math.sin(th)*f)}" r="${F(r*.075+R()*r*.04)}" fill="${i%3?shade(C[1],.18):tint(C[0],.4)}" opacity=".62"/>`;
+    }
+    return `<g><circle r="${r}" fill="url(#${id}d)"/>${dots}<circle r="${r}" fill="none" stroke="${shade(C[1],.25)}" stroke-width=".8" stroke-opacity=".35"/></g>`;
+  }
+  if(c.type==='stamen'){
+    const n=c.n||9, len=c.len||r*2.1;let s='';
+    const R=rng(7);
+    for(let i=0;i<n;i++){
+      const a=(i/n)*Math.PI*2+.3, sp2=len*(.78+R()*.4);
+      const x=Math.cos(a)*sp2, y=Math.sin(a)*sp2*.9;
+      s+=`<path d="M0 0 Q${F(x*.4)} ${F(y*.4-len*.35)} ${F(x)} ${F(y)}" fill="none" stroke="${C[0]}" stroke-width="1.5" stroke-linecap="round" opacity=".9"/>
+          <ellipse cx="${F(x)}" cy="${F(y)}" rx="${F(len*.11)}" ry="${F(len*.075)}" fill="${C[1]}" transform="rotate(${F(a*57)} ${F(x)} ${F(y)})"/>`;
+    }
+    return `<g><circle r="${F(r*.6)}" fill="${tint(C[0],.3)}" opacity=".8"/>${s}</g>`;
+  }
+  if(c.type==='trumpet'){
+    defs.push(`<radialGradient id="${id}t" cx="45%" cy="35%"><stop offset="0%" stop-color="${tint(C[0],.4)}"/><stop offset="70%" stop-color="${C[0]}"/><stop offset="100%" stop-color="${C[1]}"/></radialGradient>`);
+    let fr='';for(let i=0;i<14;i++){const a=i/14*Math.PI*2;fr+=`<circle cx="${F(Math.cos(a)*r)}" cy="${F(Math.sin(a)*r*.92)}" r="${F(r*.20)}" fill="${tint(C[0],.25)}"/>`;}
+    return `<g>${fr}<ellipse rx="${r}" ry="${F(r*.92)}" fill="url(#${id}t)"/><ellipse rx="${F(r*.56)}" ry="${F(r*.5)}" fill="${shade(C[1],.30)}" opacity=".6"/></g>`;
+  }
+  if(c.type==='button'){
+    defs.push(`<radialGradient id="${id}b" cx="42%" cy="36%"><stop offset="0%" stop-color="${tint(C[0],.35)}"/><stop offset="100%" stop-color="${C[1]}"/></radialGradient>`);
+    return `<circle r="${r}" fill="url(#${id}b)"/>`;
+  }
+  if(c.type==='eye'){ /* anemone / poppy dark eye */
+    defs.push(`<radialGradient id="${id}e" cx="45%" cy="38%"><stop offset="0%" stop-color="${C[0]}"/><stop offset="100%" stop-color="${C[1]}"/></radialGradient>`);
+    let s='';const R=rng(19);
+    for(let i=0;i<22;i++){const a=i/22*Math.PI*2;const L=r*(1.35+R()*.5);
+      s+=`<line x1="0" y1="0" x2="${F(Math.cos(a)*L)}" y2="${F(Math.sin(a)*L)}" stroke="${C[1]}" stroke-width="1.1" stroke-linecap="round" opacity=".75"/>
+          <circle cx="${F(Math.cos(a)*L)}" cy="${F(Math.sin(a)*L)}" r="1.5" fill="${C[1]}"/>`;}
+    return `<g>${s}<circle r="${r}" fill="url(#${id}e)"/></g>`;
+  }
+  return '';
+}
+
+/* composite species (cluster / spike) route to their floret builder */
+function buildHead(sp,bloom){
+  return sp.composite ? compositeSVG(sp,bloom) : headSVG(sp,bloom);
+}
+
+/* full flower head as a standalone <svg> (dex, cards, garden) */
+function flowerSVG(sp,box,cls){
+  const h=buildHead(sp,1);
+  const B=box||100;
+  return `<svg viewBox="${-B} ${-B} ${B*2} ${B*2}" class="${cls||''}" aria-hidden="true"><defs>${h.defs}</defs>
+    <g transform="scale(${F(sp.head.scale||1)}) rotate(${sp.head.spin||0})">${h.body}</g></svg>`;
+}
+
+/* ── leaves & stem ─────────────────────────────────────── */
+function leafPath(L,W,kind){
+  const N=20,pts=[];
+  const w=t=>{
+    if(kind==='strap') return W/2*Math.pow(Math.sin(Math.PI*t),.30);
+    if(kind==='needle') return W/2*Math.pow(Math.sin(Math.PI*t),.22);
+    if(kind==='heart') return W/2*Math.pow(Math.sin(Math.PI*Math.pow(t,1.4)),.62);
+    if(kind==='lobed') return W/2*profile('ovate',t)*(1+.16*Math.sin(t*Math.PI*5));
+    return W/2*profile('ovate',t);
+  };
+  for(let i=0;i<=N;i++){const t=i/N;pts.push([w(t)+ (kind==='strap'? t*t*W*.35:0),-L*t]);}
+  for(let i=N;i>=0;i--){const t=i/N;pts.push([-w(t)+ (kind==='strap'? t*t*W*.35:0),-L*t]);}
+  return smooth(pts,true);
+}
+
+/* stage: 0 seed · 1 sprout · 2 leafy · 3 bud · 4 bloom */
+function plantSVG(sp,stage,bloom){
+  if(!sp) return '';
+  const CX=125, GY=272;                       // ground line inside 250×300 viewBox
+  const K='k'+(UID++);
+  const lf=sp.leafC||['#9BBE8C','#5E8A5F'];
+  const st=sp.stem||'#6E9A6B';
+  const defs=[`<linearGradient id="${K}lg" x1="0" y1="1" x2=".6" y2="0"><stop offset="0%" stop-color="${lf[1]}"/><stop offset="60%" stop-color="${lf[0]}"/><stop offset="100%" stop-color="${tint(lf[0],.3)}"/></linearGradient>
+   <linearGradient id="${K}sg" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="${shade(st,.22)}"/><stop offset="45%" stop-color="${st}"/><stop offset="100%" stop-color="${tint(st,.28)}"/></linearGradient>`];
+  let g='';
+
+  if(stage===0){
+    return `<g><ellipse cx="${CX}" cy="${GY}" rx="34" ry="9" fill="#7A5540" opacity=".22"/>
+      <path d="M${CX-30} ${GY} Q${CX} ${GY-16} ${CX+30} ${GY} Z" fill="#8A6349"/>
+      <path d="M${CX-30} ${GY} Q${CX} ${GY-16} ${CX+30} ${GY}" fill="none" stroke="#A07B5E" stroke-width="1.6" opacity=".7"/>
+      <ellipse cx="${CX+7}" cy="${GY-8}" rx="3" ry="2" fill="#6E4C39" opacity=".5"/>
+      <ellipse cx="${CX-9}" cy="${GY-5}" rx="2.4" ry="1.8" fill="#6E4C39" opacity=".4"/></g>`;
+  }
+
+  const H = stage===1?42 : stage===2?96 : stage===3?152 : 170;
+  const topY = GY - H;
+  const bend = 8;
+  g+=`<path d="M${CX} ${GY} C${CX-bend} ${GY-H*.4} ${CX+bend} ${GY-H*.72} ${CX} ${topY}" fill="none" stroke="url(#${K}sg)" stroke-width="${stage===1?4.2:6}" stroke-linecap="round"/>`;
+
+  const lk=sp.leaf||'ovate';
+  const put=(y,side,L,W,rot)=>{
+    const x=CX+side*2;
+    g+=`<g transform="translate(${F(x)} ${F(y)}) rotate(${F(rot)})"><path d="${leafPath(L,W,lk)}" fill="url(#${K}lg)" stroke="${shade(lf[1],.15)}" stroke-width=".6" stroke-opacity=".4"/>
+      <path d="M0 0 Q${F(W*.1)} ${F(-L*.5)} ${F(lk==='strap'?W*.35:0)} ${F(-L*.9)}" fill="none" stroke="${shade(lf[1],.25)}" stroke-width=".8" stroke-opacity=".3"/></g>`;
+  };
+  if(stage===1){
+    put(GY-30,-1,30,20,-64); put(GY-30,1,30,20,64);
+    return `<defs>${defs.join('')}</defs>${soil(CX,GY)}${g}`;
+  }
+  {
+    const n = stage===2?3:4;
+    for(let i=0;i<n;i++){
+      const t=(i+1)/(n+1.15), y=GY-H*t*.86;
+      const side=i%2?1:-1;
+      const L=(stage===2?40:50)*(1-t*.28), W=L*(lk==='strap'?.30:lk==='needle'?.20:.46);
+      put(y,side,L,W,side*(66-t*16));
+    }
+  }
+
+  if(stage===2){
+    g+=`<circle cx="${CX}" cy="${F(topY-4)}" r="6" fill="${tint(lf[0],.15)}" stroke="${shade(lf[1],.2)}" stroke-width=".7" stroke-opacity=".4"/>`;
+    return `<defs>${defs.join('')}</defs>${soil(CX,GY)}${g}`;
+  }
+  if(stage===3){
+    const bc=sp.col[1];
+    g+=`<g transform="translate(${CX} ${F(topY)})">
+      <path d="M0 6 C-12 2 -13 -18 0 -26 C13 -18 12 2 0 6 Z" fill="${mix(bc,lf[0],.30)}" stroke="${shade(bc,.3)}" stroke-width=".7" stroke-opacity=".35"/>
+      <path d="M0 6 C-7 3 -8 -14 0 -22 C4 -16 4 0 0 6 Z" fill="${tint(bc,.2)}" opacity=".75"/>
+      <path d="M-11 4 C-15 -6 -11 -18 -4 -22" fill="none" stroke="${lf[1]}" stroke-width="2.4" stroke-linecap="round"/>
+      <path d="M11 4 C15 -6 11 -18 4 -22" fill="none" stroke="${lf[1]}" stroke-width="2.4" stroke-linecap="round"/></g>`;
+    return `<defs>${defs.join('')}</defs>${soil(CX,GY)}${g}`;
+  }
+
+  const h=buildHead(sp,bloom);
+  defs.push(h.defs);
+  g+=`<g class="headG" transform="translate(${CX} ${F(topY-6)}) scale(${F((sp.head.scale||1)*.72)}) rotate(${sp.head.spin||0})">${h.body}</g>`;
+  return `<defs>${defs.join('')}</defs>${soil(CX,GY)}${g}`;
+}
+function soil(CX,GY){
+  return `<ellipse cx="${CX}" cy="${GY}" rx="34" ry="9" fill="#7A5540" opacity=".20"/>
+    <path d="M${CX-32} ${GY+2} Q${CX} ${GY-12} ${CX+32} ${GY+2} Z" fill="#8A6349"/>`;
+}
+
+/* ══════════════════════════════════════════════════════════
+   30 SPECIES
+   ══════════════════════════════════════════════════════════ */
+const L=(n,Ln,W,shape,prof,o)=>Object.assign({n,L:Ln,W,shape,prof},o||{});
+
+const SPECIES=[
+{id:'tulip',ko:'튤립',la:'Tulipa gesneriana',mean:'영원한 사랑',rar:1,
+ col:['#C8446B','#E0678C','#F5A7BC'],ctr:['#F6E2A8','#C9A24A'],stem:'#6E9A6B',leafC:['#9CC08D','#5E8A5F'],leaf:'strap',
+ head:{scale:1.12,layers:[L(2,68,42,'point','drop',{rot:0,arc:100,c:0,dk:.20,jit:2}),
+   L(3,76,44,'point','drop',{rot:0,arc:56,c:1,jit:2}),
+   L(1,54,30,'point','drop',{rot:0,c:2,jit:0,op:.85})],center:{type:'none'}}},
+
+{id:'rose',ko:'장미',la:'Rosa hybrida',mean:'열렬한 사랑',rar:2,
+ col:['#B8324F','#D9536F','#F0909F'],ctr:['#F2C3C8','#C86A7E'],stem:'#5E8A5F',leafC:['#84AF7C','#456B4C'],leaf:'ovate',
+ head:{layers:[L(8,58,44,'round','obovate',{rot:12,c:0,dk:.24}),L(8,46,38,'round','obovate',{rot:34,c:1}),
+   L(7,34,30,'round','obovate',{rot:8,c:1,lt:.18}),L(6,23,22,'round','obovate',{rot:26,c:2,curl:.10}),
+   L(5,14,15,'round','obovate',{rot:0,c:2,curl:.22,lt:.10})],center:{type:'button',r:4}}},
+
+{id:'daisy',ko:'데이지',la:'Bellis perennis',mean:'순수한 마음',rar:1,
+ col:['#E9D8D4','#FBF3F1','#FFFFFF'],ctr:['#F7D670','#D19E30'],stem:'#6E9A6B',leafC:['#9CC08D','#5E8A5F'],leaf:'obovate',
+ head:{layers:[L(21,52,15,'round','even',{rot:8,c:0,dk:.10,lt:.10}),L(19,46,14,'round','even',{rot:17,c:1,dk:.06})],center:{type:'disc',r:14,dots:40}}},
+
+{id:'sunflower',ko:'해바라기',la:'Helianthus annuus',mean:'당신만 바라봐요',rar:2,
+ col:['#E9A426','#F5C246','#FBE08A'],ctr:['#8A5B2E','#4E3218'],stem:'#5E8A5F',leafC:['#8CB57F','#4C7350'],leaf:'heart',
+ head:{scale:.94,layers:[L(18,66,22,'point','lance',{rot:10,c:0,dk:.18}),L(16,58,20,'point','lance',{rot:21,c:1}),
+   L(14,48,18,'point','lance',{rot:13,c:2,lt:.12})],center:{type:'disc',r:28,dots:110}}},
+
+{id:'cherry',ko:'벚꽃',la:'Prunus serrulata',mean:'아름다운 정신',rar:1,
+ col:['#F3AEBE','#FBD3DC','#FFF0F3'],ctr:['#F6D98C','#CF9A4A'],stem:'#8A6A55',leafC:['#93B884','#57804F'],leaf:'ovate',
+ head:{scale:1.05,layers:[L(5,46,40,'notch','obovate',{rot:0,c:0,dk:.10,lt:.22}),L(5,38,34,'notch','obovate',{rot:36,c:1,op:.95})],
+ center:{type:'stamen',r:5,n:12,len:18}}},
+
+{id:'hydrangea',ko:'수국',la:'Hydrangea macrophylla',mean:'진심',rar:2,
+ col:['#7FA0D8','#A5BEE8','#D3DFF5'],ctr:['#EFF3D8','#B7C36E'],stem:'#6E9A6B',leafC:['#8CB57F','#4C7350'],leaf:'ovate',
+ head:{scale:1,cluster:true,layers:[],center:{type:'none'}},
+ composite:{r:52,n:15,floret:{layers:[L(4,17,15,'round','obovate',{rot:45,c:1,dk:.16})],center:{type:'button',r:2.6}}}},
+
+{id:'lavender',ko:'라벤더',la:'Lavandula angustifolia',mean:'침묵의 기다림',rar:2,
+ col:['#8A72C4','#A78FD6','#CFC0EC'],ctr:['#E3DAF6','#8A72C4'],stem:'#7E9470',leafC:['#93A97F','#5A7052'],leaf:'needle',
+ head:{scale:1,spike:true,layers:[],center:{type:'none'}},
+ composite:{spike:true,rows:9,floret:{layers:[L(4,11,10,'round','ovate',{rot:45,c:1})],center:{type:'button',r:1.8}}}},
+
+{id:'lily',ko:'백합',la:'Lilium longiflorum',mean:'변함없는 순결',rar:3,
+ col:['#F2E7DC','#FFFAF4','#FFFFFF'],ctr:['#E8B84C','#B0761F'],stem:'#5E8A5F',leafC:['#84AF7C','#456B4C'],leaf:'needle',
+ head:{scale:1.1,layers:[L(3,68,26,'point','lance',{rot:60,c:0,curl:.16,dk:.12}),L(3,66,25,'point','lance',{rot:0,c:1,curl:.15,dk:.06})],
+ center:{type:'stamen',r:5,n:6,len:30}}},
+
+{id:'carnation',ko:'카네이션',la:'Dianthus caryophyllus',mean:'감사와 존경',rar:1,
+ col:['#D4416B','#E77190','#F5AEC0'],ctr:['#F6D6DC','#C4677F'],stem:'#7E9E7A',leafC:['#9CB894','#5E7F60'],leaf:'needle',
+ head:{layers:[L(9,50,34,'fringe','obovate',{rot:0,c:0,dk:.20}),L(9,42,30,'fringe','obovate',{rot:20,c:1}),
+  L(8,33,26,'fringe','obovate',{rot:10,c:1,lt:.16}),L(7,24,20,'fringe','obovate',{rot:26,c:2})],center:{type:'button',r:3.5}}},
+
+{id:'cosmos',ko:'코스모스',la:'Cosmos bipinnatus',mean:'소녀의 순정',rar:1,
+ col:['#D9628F','#EC8FAF','#F8C3D5'],ctr:['#F5D46E','#C79A32'],stem:'#7E9E6E',leafC:['#9CBD8A','#5E8155'],leaf:'needle',
+ head:{scale:1.06,layers:[L(8,54,32,'fringe','obovate',{rot:0,c:0,dk:.14}),L(8,48,29,'fringe','obovate',{rot:22,c:1,op:.96})],
+ center:{type:'disc',r:11,dots:26}}},
+
+{id:'daffodil',ko:'수선화',la:'Narcissus pseudonarcissus',mean:'자기 사랑',rar:2,
+ col:['#F3D765','#F9E795','#FDF4C8'],ctr:['#F0A73C','#C87218'],stem:'#6E9A6B',leafC:['#93B884','#57804F'],leaf:'strap',
+ head:{layers:[L(6,50,30,'point','ovate',{rot:0,c:0,dk:.14}),L(6,44,27,'point','ovate',{rot:30,c:1})],
+ center:{type:'trumpet',r:15}}},
+
+{id:'peony',ko:'작약',la:'Paeonia lactiflora',mean:'수줍음',rar:3,
+ col:['#DE7196','#EE9CB6','#FAD0DC'],ctr:['#F8E6B4','#D0A548'],stem:'#6E9A6B',leafC:['#8CB57F','#4C7350'],leaf:'lobed',
+ head:{scale:.98,layers:[L(9,62,46,'ruffle','obovate',{rot:0,c:0,dk:.18}),L(10,52,38,'ruffle','obovate',{rot:18,c:1}),
+  L(10,42,30,'ruffle','obovate',{rot:9,c:1,lt:.18}),L(9,32,24,'ruffle','obovate',{rot:24,c:2}),
+  L(7,22,18,'ruffle','obovate',{rot:12,c:2,lt:.14})],center:{type:'button',r:5}}},
+
+{id:'babysbreath',ko:'안개꽃',la:'Gypsophila paniculata',mean:'맑은 마음',rar:1,
+ col:['#F5EFEC','#FFFCFA','#FFFFFF'],ctr:['#F6E9B8','#CBB064'],stem:'#88A47F',leafC:['#9CB894','#5E7F60'],leaf:'needle',
+ head:{scale:1,layers:[],center:{type:'none'}},
+ composite:{r:56,n:22,scatter:true,floret:{layers:[L(5,10,9,'round','obovate',{rot:0,c:1,dk:.08})],center:{type:'button',r:1.6}}}},
+
+{id:'pansy',ko:'팬지',la:'Viola tricolor',mean:'나를 생각해줘요',rar:2,
+ col:['#6B4FA8','#8E6DC4','#C6B0E4'],ctr:['#F3D866','#B98C22'],stem:'#7E9E6E',leafC:['#9CBD8A','#5E8155'],leaf:'heart',
+ head:{scale:1.04,layers:[L(2,52,44,'round','obovate',{rot:-40,arc:80,c:0,dk:.22}),
+  L(2,46,42,'round','obovate',{rot:130,arc:70,c:1}),L(1,44,46,'round','obovate',{rot:180,c:2,lt:.06})],
+ center:{type:'eye',r:6}}},
+
+{id:'hibiscus',ko:'무궁화',la:'Hibiscus syriacus',mean:'섬세한 아름다움',rar:2,
+ col:['#E1A8C4','#F0C6DA','#FBE6EF'],ctr:['#D9435F','#8E1F35'],stem:'#7A9A6E',leafC:['#8CB57F','#4C7350'],leaf:'lobed',
+ head:{scale:1.05,layers:[L(5,56,44,'round','obovate',{rot:0,c:0,curl:.10,dk:.12,dir:'in'})],
+ center:{type:'stamen',r:7,n:10,len:26}}},
+
+{id:'magnolia',ko:'목련',la:'Magnolia denudata',mean:'고귀함',rar:2,
+ col:['#F3E9E4','#FBF6F3','#FFFFFF'],ctr:['#E7C77A','#B08A34'],stem:'#8A6A55',leafC:['#8CB57F','#4C7350'],leaf:'obovate',
+ head:{scale:1.08,layers:[L(3,66,32,'point','drop',{rot:60,c:0,curl:.08,dk:.10}),L(3,60,30,'point','drop',{rot:0,c:1,curl:.07}),
+  L(3,46,24,'point','drop',{rot:30,c:2,curl:.14})],center:{type:'button',r:5}}},
+
+{id:'iris',ko:'붓꽃',la:'Iris sanguinea',mean:'좋은 소식',rar:2,
+ col:['#5B4FA6','#7A6CC2','#B6ACE0'],ctr:['#F3D45E','#B78D1E'],stem:'#6E9A6B',leafC:['#93B884','#57804F'],leaf:'needle',
+ head:{scale:1.03,layers:[L(3,56,40,'round','obovate',{rot:60,c:0,dk:.20,tilt:1.02}),
+  L(3,44,28,'point','lance',{rot:0,c:1,curl:.06}),L(3,26,20,'round','obovate',{rot:60,c:2,dy:-4})],
+ center:{type:'button',r:5}}},
+
+{id:'poppy',ko:'양귀비',la:'Papaver rhoeas',mean:'위로',rar:2,
+ col:['#D93B36','#E9635A','#F5A093'],ctr:['#3A2A2E','#1E1418'],stem:'#7E9E6E',leafC:['#9CBD8A','#5E8155'],leaf:'lobed',
+ head:{scale:1.04,layers:[L(4,54,52,'ruffle','wide',{rot:45,c:0,dk:.20}),L(4,46,46,'ruffle','wide',{rot:0,c:1})],
+ center:{type:'eye',r:8}}},
+
+{id:'chrys',ko:'국화',la:'Chrysanthemum morifolium',mean:'고결함',rar:2,
+ col:['#E8B04A','#F3C96F','#FBE5AC'],ctr:['#D89B2E','#A2680F'],stem:'#7E9E6E',leafC:['#8CB57F','#4C7350'],leaf:'lobed',
+ head:{layers:[L(20,54,13,'quill','even',{rot:0,c:0,dk:.18,jit:8}),L(18,45,12,'quill','even',{rot:9,c:1,jit:8}),
+  L(16,36,11,'quill','even',{rot:5,c:1,lt:.16,jit:8}),L(13,26,10,'quill','even',{rot:12,c:2,jit:8})],
+ center:{type:'button',r:5}}},
+
+{id:'dahlia',ko:'다알리아',la:'Dahlia pinnata',mean:'화려함',rar:3,
+ col:['#C7476F','#DE7191','#F0A9BF'],ctr:['#F5DA9A','#C79A3E'],stem:'#6E9A6B',leafC:['#84AF7C','#456B4C'],leaf:'lobed',
+ head:{layers:[L(12,58,20,'point','drop',{rot:0,c:0,curl:.05,dk:.20}),L(12,48,18,'point','drop',{rot:15,c:1,curl:.07}),
+  L(10,38,16,'point','drop',{rot:8,c:1,lt:.14,curl:.09}),L(9,28,14,'point','drop',{rot:20,c:2,curl:.12}),
+  L(7,18,12,'point','drop',{rot:10,c:2,lt:.12})],center:{type:'button',r:4}}},
+
+{id:'anemone',ko:'아네모네',la:'Anemone coronaria',mean:'기다림',rar:2,
+ col:['#8E4FA8','#A96FC0','#D4B4E0'],ctr:['#2E2233','#151018'],stem:'#7E9E6E',leafC:['#9CBD8A','#5E8155'],leaf:'lobed',
+ head:{scale:1.02,layers:[L(7,52,32,'round','obovate',{rot:0,c:0,dk:.18}),L(6,44,28,'round','obovate',{rot:26,c:1})],
+ center:{type:'eye',r:10}}},
+
+{id:'forgetmenot',ko:'물망초',la:'Myosotis scorpioides',mean:'나를 잊지 마세요',rar:1,
+ col:['#5C93D6','#7FB0E4','#B9D6F2'],ctr:['#F6E08A','#D0A62E'],stem:'#7E9E6E',leafC:['#9CBD8A','#5E8155'],leaf:'obovate',
+ head:{scale:1,layers:[],center:{type:'none'}},
+ composite:{r:46,n:11,floret:{layers:[L(5,16,15,'round','obovate',{rot:0,c:1,dk:.14})],center:{type:'button',r:3}}}},
+
+{id:'freesia',ko:'프리지아',la:'Freesia refracta',mean:'천진난만',rar:2,
+ col:['#F2D45E','#F8E48F','#FDF3C6'],ctr:['#F0B23E','#C07C12'],stem:'#7E9E6E',leafC:['#93B884','#57804F'],leaf:'strap',
+ head:{scale:1.02,layers:[L(6,44,26,'point','ovate',{rot:0,c:0,curl:.10,dk:.14}),L(6,34,22,'point','ovate',{rot:30,c:1,curl:.12})],
+ center:{type:'stamen',r:4,n:5,len:14}}},
+
+{id:'jasmine',ko:'재스민',la:'Jasminum officinale',mean:'상냥함',rar:1,
+ col:['#F7F1EC','#FFFBF8','#FFFFFF'],ctr:['#F3DE9C','#C7A64C'],stem:'#7A9A6E',leafC:['#8CB57F','#4C7350'],leaf:'ovate',
+ head:{scale:1,layers:[],center:{type:'none'}},
+ composite:{r:44,n:7,floret:{layers:[L(6,20,11,'point','lance',{rot:0,c:1,dk:.08})],center:{type:'button',r:2.4}}}},
+
+{id:'camellia',ko:'동백',la:'Camellia japonica',mean:'그대를 사랑해요',rar:2,
+ col:['#C0223F','#D8465E','#EE8A98'],ctr:['#F4D96A','#C29A2A'],stem:'#5E7F60',leafC:['#6E9A6B','#33543C'],leaf:'ovate',
+ head:{scale:1.02,layers:[L(6,54,44,'round','obovate',{rot:0,c:0,dk:.22}),L(6,44,38,'round','obovate',{rot:28,c:1}),
+  L(5,32,28,'round','obovate',{rot:12,c:1,lt:.14})],center:{type:'stamen',r:7,n:11,len:16}}},
+
+{id:'clematis',ko:'클레마티스',la:'Clematis patens',mean:'마음의 아름다움',rar:2,
+ col:['#7B5FC0','#9A80D4','#CBBCEA'],ctr:['#F1E3A8','#B8983C'],stem:'#7A9A6E',leafC:['#8CB57F','#4C7350'],leaf:'ovate',
+ head:{scale:1.05,layers:[L(6,60,28,'point','drop',{rot:0,c:0,dk:.18}),L(6,50,24,'point','drop',{rot:30,c:1,op:.95})],
+ center:{type:'stamen',r:6,n:14,len:18}}},
+
+{id:'lotus',ko:'연꽃',la:'Nelumbo nucifera',mean:'맑고 깨끗한 마음',rar:3,
+ col:['#EDA6BC','#F6C8D6','#FDECF1'],ctr:['#DCC96A','#9E8420'],stem:'#6E9A6B',leafC:['#7FAE7E','#3F6647'],leaf:'ovate',
+ head:{scale:1.06,layers:[L(8,64,30,'point','drop',{rot:0,c:0,dk:.14}),L(8,54,27,'point','drop',{rot:22,c:1}),
+  L(7,42,23,'point','drop',{rot:10,c:2,lt:.10})],center:{type:'disc',r:12,dots:16}}},
+
+{id:'sweetpea',ko:'스위트피',la:'Lathyrus odoratus',mean:'추억',rar:1,
+ col:['#E191B8','#F0B4CF','#FBDDE9'],ctr:['#F5E1B8','#C7A75A'],stem:'#8AA87A',leafC:['#9CBD8A','#5E8155'],leaf:'ovate',
+ head:{scale:1.04,layers:[L(1,54,60,'ruffle','wide',{rot:0,c:0,dk:.14,tilt:.94,jit:0}),
+  L(2,36,30,'round','obovate',{rot:0,arc:150,c:1,dy:12,jit:0}),
+  L(1,26,28,'round','obovate',{rot:180,c:2,dy:14,jit:0})],
+ center:{type:'none'}}},
+
+{id:'azalea',ko:'진달래',la:'Rhododendron mucronulatum',mean:'첫사랑',rar:1,
+ col:['#DD7BAA','#EDA3C6','#F9D5E4'],ctr:['#C9457F','#8E2456'],stem:'#8A6A55',leafC:['#8CB57F','#4C7350'],leaf:'obovate',
+ head:{scale:1.05,layers:[L(5,52,36,'round','obovate',{rot:0,c:0,dk:.14,dir:'in'})],
+ center:{type:'stamen',r:5,n:8,len:24}}},
+
+{id:'gerbera',ko:'거베라',la:'Gerbera jamesonii',mean:'신비로움',rar:2,
+ col:['#E86A3E','#F28C5C','#F9BC96'],ctr:['#7A4A2A','#3E2314'],stem:'#7E9E6E',leafC:['#8CB57F','#4C7350'],leaf:'lobed',
+ head:{scale:.98,layers:[L(22,60,16,'round','even',{rot:0,c:0,dk:.16}),L(20,50,14,'round','even',{rot:9,c:1}),
+  L(16,40,12,'round','even',{rot:5,c:2,lt:.10})],center:{type:'disc',r:17,dots:60}}}
+];
+
+/* composite (cluster / spike) flowers rendered from a floret spec */
+function compositeSVG(sp,bloom){
+  const c=sp.composite, out=[], defs=[];
+  const R=rng(sp.id.length*13+7);
+  const fl={col:sp.col,ctr:sp.ctr,head:c.floret};
+  const pos=[];
+  if(c.spike){
+    for(let r=0;r<c.rows;r++){
+      const y=-70+r*15, w=(1-Math.abs(r-c.rows*.42)/c.rows)*22+8;
+      pos.push([-w*.7,y,.9],[w*.7,y+4,.85],[0,y-3,1]);
+    }
+  }else{
+    pos.push([0,0,1.15]);
+    const n=c.n;
+    for(let i=1;i<n;i++){
+      const a=i*2.3999632, rr=Math.sqrt(i/n)*c.r*(c.scatter?1.05:.92);
+      pos.push([Math.cos(a)*rr,Math.sin(a)*rr*.88,(c.scatter?.7:.95)+R()*.3]);
+    }
+  }
+  pos.sort((a,b)=>a[1]-b[1]);
+  pos.forEach((p,i)=>{
+    const h=headSVG(fl,bloom);
+    defs.push(h.defs);
+    out.push(`<g class="floret" data-i="${i}" transform="translate(${F(p[0])} ${F(p[1])}) scale(${F(p[2])})">${h.body}</g>`);
+  });
+  return {defs:defs.join(''),body:out.join('')};
+}
+
+/* ══════════════════════════════════════════════════════════
+   FLORA/CANVAS — the same parametric flowers, drawn with
+   Path2D + canvas gradients so hundreds can live in one field.
+   ══════════════════════════════════════════════════════════ */
+const RAD = Math.PI/180;
+
+function drawCenterC(g,sp){
+  const c=sp.head.center||{type:'none'}, C=sp.ctr||['#F4DFA4','#C79A44'], r=c.r||10;
+  if(c.type==='none') return;
+  if(c.type==='disc'){
+    const gr=g.createRadialGradient(-r*.16,-r*.24,r*.05,0,0,r);
+    gr.addColorStop(0,tint(C[0],.30)); gr.addColorStop(.58,C[0]); gr.addColorStop(1,C[1]);
+    g.fillStyle=gr; g.beginPath(); g.arc(0,0,r,0,6.2832); g.fill();
+    const R=rng(11), k=c.dots===undefined?46:c.dots;
+    g.globalAlpha=.62;
+    for(let i=0;i<k;i++){
+      const f=Math.sqrt(i/k)*r*.92, th=i*2.3999632;
+      g.fillStyle=i%3?shade(C[1],.18):tint(C[0],.4);
+      g.beginPath(); g.arc(Math.cos(th)*f,Math.sin(th)*f,r*.075+R()*r*.04,0,6.2832); g.fill();
+    }
+    g.globalAlpha=1;
+    g.strokeStyle=shade(C[1],.25); g.globalAlpha=.35; g.lineWidth=.8;
+    g.beginPath(); g.arc(0,0,r,0,6.2832); g.stroke(); g.globalAlpha=1;
+    return;
+  }
+  if(c.type==='stamen'){
+    const n=c.n||9, len=c.len||r*2.1, R=rng(7);
+    g.fillStyle=tint(C[0],.3); g.globalAlpha=.8;
+    g.beginPath(); g.arc(0,0,r*.6,0,6.2832); g.fill(); g.globalAlpha=1;
+    for(let i=0;i<n;i++){
+      const a=(i/n)*6.2832+.3, d=len*(.78+R()*.4);
+      const x=Math.cos(a)*d, y=Math.sin(a)*d*.9;
+      g.strokeStyle=C[0]; g.lineWidth=1.5; g.lineCap='round'; g.globalAlpha=.9;
+      g.beginPath(); g.moveTo(0,0); g.quadraticCurveTo(x*.4,y*.4-len*.35,x,y); g.stroke();
+      g.globalAlpha=1; g.fillStyle=C[1];
+      g.save(); g.translate(x,y); g.rotate(a); g.beginPath();
+      g.ellipse(0,0,len*.11,len*.075,0,0,6.2832); g.fill(); g.restore();
+    }
+    return;
+  }
+  if(c.type==='trumpet'){
+    g.fillStyle=tint(C[0],.25);
+    for(let i=0;i<14;i++){const a=i/14*6.2832;
+      g.beginPath(); g.arc(Math.cos(a)*r,Math.sin(a)*r*.92,r*.20,0,6.2832); g.fill();}
+    const gr=g.createRadialGradient(-r*.1,-r*.3,r*.06,0,0,r);
+    gr.addColorStop(0,tint(C[0],.4)); gr.addColorStop(.7,C[0]); gr.addColorStop(1,C[1]);
+    g.fillStyle=gr; g.beginPath(); g.ellipse(0,0,r,r*.92,0,0,6.2832); g.fill();
+    g.fillStyle=shade(C[1],.30); g.globalAlpha=.6;
+    g.beginPath(); g.ellipse(0,0,r*.56,r*.5,0,0,6.2832); g.fill(); g.globalAlpha=1;
+    return;
+  }
+  if(c.type==='button'){
+    const gr=g.createRadialGradient(-r*.16,-r*.28,r*.05,0,0,r);
+    gr.addColorStop(0,tint(C[0],.35)); gr.addColorStop(1,C[1]);
+    g.fillStyle=gr; g.beginPath(); g.arc(0,0,r,0,6.2832); g.fill();
+    return;
+  }
+  if(c.type==='eye'){
+    const R=rng(19);
+    g.strokeStyle=C[1]; g.lineWidth=1.1; g.lineCap='round'; g.globalAlpha=.75;
+    for(let i=0;i<22;i++){
+      const a=i/22*6.2832, L=r*(1.35+R()*.5);
+      g.beginPath(); g.moveTo(0,0); g.lineTo(Math.cos(a)*L,Math.sin(a)*L); g.stroke();
+      g.fillStyle=C[1]; g.beginPath(); g.arc(Math.cos(a)*L,Math.sin(a)*L,1.5,0,6.2832); g.fill();
+    }
+    g.globalAlpha=1;
+    const gr=g.createRadialGradient(-r*.1,-r*.24,r*.05,0,0,r);
+    gr.addColorStop(0,C[0]); gr.addColorStop(1,C[1]);
+    g.fillStyle=gr; g.beginPath(); g.arc(0,0,r,0,6.2832); g.fill();
+  }
+}
+
+function drawHeadC(g,sp,bloom){
+  const b=bloom===undefined?1:bloom;
+  if(sp.composite){ drawCompositeC(g,sp,b); return; }
+  const C=sp.col;
+  sp.head.layers.forEach((ly,li)=>{
+    const base=C[ly.c===undefined?1:ly.c];
+    const deep=shade(base,ly.dk===undefined?.20:ly.dk);
+    const lite=tint(base,ly.lt===undefined?.34:ly.lt);
+    const inv=ly.dir==='in';
+    const n=ly.n, arc=ly.arc===undefined?360:ly.arc, rot=ly.rot||0;
+    const P=new Path2D(petalPath(ly.L,ly.W,ly.shape,ly.prof,ly.curl||0));
+    const V=(ly.L>26&&n<=14)?new Path2D(veins(ly.L,ly.W,ly.shape,ly.curl||0,3)):null;
+    const R=rng((li+1)*37+n);
+    g.save();
+    g.globalAlpha=ly.op===undefined?1:ly.op;
+    g.translate(0,ly.dy||0);
+    g.scale(1,ly.tilt===undefined?1:ly.tilt);
+    for(let i=0;i<n;i++){
+      const a=rot+(arc>=360?i*360/n:(n===1?0:(-arc/2+arc*i/(n-1))));
+      const jit=(R()-.5)*(ly.jit===undefined?5:ly.jit);
+      const sc=(ly.sc||1)*(1+(R()-.5)*.10);
+      R();
+      const bs=.12+.88*b, ba=(a+jit)-26*(1-b), s=sc*bs;
+      g.save();
+      g.rotate(ba*RAD); g.scale(s,s);
+      const gr=g.createLinearGradient(0,0,0,-ly.L);
+      gr.addColorStop(0,inv?lite:deep);
+      gr.addColorStop(.42,base);
+      gr.addColorStop(1,inv?deep:lite);
+      g.fillStyle=gr; g.fill(P);
+      g.strokeStyle=tint(lite,.35); g.lineWidth=.7;
+      g.save(); g.globalAlpha*=.55; g.stroke(P); g.restore();
+      if(V){ g.save(); g.globalAlpha*=.22; g.strokeStyle=shade(base,.30); g.lineWidth=.55; g.stroke(V); g.restore(); }
+      const sh=g.createLinearGradient(-ly.W*.3,0,ly.W*.4,-ly.L);
+      sh.addColorStop(0,'rgba(255,255,255,0)');
+      sh.addColorStop(.55,'rgba(255,255,255,.34)');
+      sh.addColorStop(1,'rgba(255,255,255,0)');
+      g.save(); g.globalAlpha*=.5; g.fillStyle=sh; g.fill(P); g.restore();
+      g.restore();
+    }
+    g.restore();
+  });
+  drawCenterC(g,sp);
+}
+
+function drawCompositeC(g,sp,b){
+  const c=sp.composite, R=rng(sp.id.length*13+7), fl={col:sp.col,ctr:sp.ctr,head:c.floret};
+  const pos=[];
+  if(c.spike){
+    for(let r=0;r<c.rows;r++){
+      const y=-70+r*15, w=(1-Math.abs(r-c.rows*.42)/c.rows)*22+8;
+      pos.push([-w*.7,y,.9],[w*.7,y+4,.85],[0,y-3,1]);
+    }
+  }else{
+    pos.push([0,0,1.15]);
+    for(let i=1;i<c.n;i++){
+      const a=i*2.3999632, rr=Math.sqrt(i/c.n)*c.r*(c.scatter?1.05:.92);
+      pos.push([Math.cos(a)*rr,Math.sin(a)*rr*.88,(c.scatter?.7:.95)+R()*.3]);
+    }
+  }
+  pos.sort((a,b2)=>a[1]-b2[1]);
+  pos.forEach(p=>{
+    g.save(); g.translate(p[0],p[1]); g.scale(p[2],p[2]);
+    drawHeadC(g,fl,b); g.restore();
+  });
+}
+
+/* ── a whole plant on a bed, base at (0,0), growing up ──── */
+const STEM_H=[0,18,40,60,66];
+const HEAD_K=0.34;
+function drawPlantC(g,sp,stage,bloom){
+  if(!sp||stage<=0) return;
+  const lf=sp.leafC||['#9BBE8C','#5E8A5F'], st=sp.stem||'#6E9A6B';
+  const H=STEM_H[stage], lk=sp.leaf||'ovate';
+
+  const sg=g.createLinearGradient(-4,0,4,0);
+  sg.addColorStop(0,shade(st,.22)); sg.addColorStop(.45,st); sg.addColorStop(1,tint(st,.28));
+  g.strokeStyle=sg; g.lineWidth=stage===1?3:4.3; g.lineCap='round';
+  g.beginPath(); g.moveTo(0,0);
+  g.bezierCurveTo(-5,-H*.4,5,-H*.72,0,-H); g.stroke();
+
+  const leaf=(y,side,L,W,rot)=>{
+    g.save(); g.translate(side*1.5,y); g.rotate(rot*RAD);
+    const lg=g.createLinearGradient(0,L*.3,W*.45,-L*.9);
+    lg.addColorStop(0,lf[1]); lg.addColorStop(.6,lf[0]); lg.addColorStop(1,tint(lf[0],.30));
+    g.fillStyle=lg; const P=new Path2D(leafPath(L,W,lk)); g.fill(P);
+    g.strokeStyle=shade(lf[1],.15); g.lineWidth=.6;
+    g.save(); g.globalAlpha*=.4; g.stroke(P); g.restore();
+    g.restore();
+  };
+
+  if(stage===1){                                   // 새싹 — stops here
+    leaf(-13,-1,19,13,-66); leaf(-13,1,19,13,66);
+    return;
+  }
+  {
+    const n=stage===2?3:4;
+    for(let i=0;i<n;i++){
+      const t=(i+1)/(n+1.15), y=-H*t*.86, side=i%2?1:-1;
+      const L=(stage===2?24:30)*(1-t*.26);
+      const W=L*(lk==='strap'?.30:lk==='needle'?.20:.46);
+      leaf(y,side,L,W,side*(66-t*16));
+    }
+  }
+
+  if(stage===2){
+    g.fillStyle=tint(lf[0],.15); g.strokeStyle=shade(lf[1],.2); g.lineWidth=.7;
+    g.beginPath(); g.arc(0,-H-3,4.4,0,6.2832); g.fill();
+    g.save(); g.globalAlpha*=.4; g.stroke(); g.restore();
+    return;
+  }
+  if(stage===3){
+    const bc=sp.col[1];
+    g.save(); g.translate(0,-H);
+    g.fillStyle=mix(bc,lf[0],.30);
+    g.beginPath(); g.moveTo(0,4); g.bezierCurveTo(-9,1,-10,-13,0,-19);
+    g.bezierCurveTo(10,-13,9,1,0,4); g.fill();
+    g.strokeStyle=shade(bc,.3); g.lineWidth=.7;
+    g.save(); g.globalAlpha*=.35; g.stroke(); g.restore();
+    g.fillStyle=tint(bc,.2); g.globalAlpha*=.75;
+    g.beginPath(); g.moveTo(0,4); g.bezierCurveTo(-5,2,-6,-10,0,-16);
+    g.bezierCurveTo(3,-12,3,0,0,4); g.fill(); g.globalAlpha=1;
+    g.strokeStyle=lf[1]; g.lineWidth=2.2; g.lineCap='round';
+    g.beginPath(); g.moveTo(-8,3); g.bezierCurveTo(-11,-4,-8,-13,-3,-16); g.stroke();
+    g.beginPath(); g.moveTo(8,3); g.bezierCurveTo(11,-4,8,-13,3,-16); g.stroke();
+    g.restore();
+    return;
+  }
+
+  g.save();
+  g.translate(0,-H-6);
+  const k=HEAD_K*(sp.head.scale||1);
+  g.scale(k,k);
+  if(sp.head.spin) g.rotate(sp.head.spin*RAD);
+  drawHeadC(g,sp,bloom);
+  g.restore();
+}
+
+/* ── sprite cache: one offscreen canvas per (species, stage) ── */
+const SPW=112, SPH=132, SPBASE=118, SPR=2;
+const _sprites=new Map();
+function plantSprite(sp,stage){
+  const key=sp.id+'/'+stage;
+  let c=_sprites.get(key);
+  if(c) return c;
+  c=document.createElement('canvas');
+  c.width=SPW*SPR; c.height=SPH*SPR;
+  const g=c.getContext('2d');
+  g.setTransform(SPR,0,0,SPR,0,0);
+  g.translate(SPW/2,SPBASE);
+  drawPlantC(g,sp,stage,1);
+  _sprites.set(key,c);
+  return c;
+}
+
+/* ══════════════════════════════════════════════════════════
+   FLORA/EXPANSION — 6 new archetypes + 64 species built from
+   them, bringing the index to 100. Rarity: C · U · R · SR · UR
+   ══════════════════════════════════════════════════════════ */
+
+const RARITY=[
+  null,
+  {k:'C', ko:'일반', col:'#7FA88C', bg:'#E8F1E7', lv:1,  price:60,   coin:75,   xp:1,  wpg:1, odds:46},
+  {k:'U', ko:'고급', col:'#5C93C4', bg:'#E4EEF8', lv:3,  price:180,  coin:225,  xp:2,  wpg:1, odds:28},
+  {k:'R', ko:'희귀', col:'#8B6BC4', bg:'#EDE7F8', lv:6,  price:520,  coin:650,  xp:4,  wpg:2, odds:16},
+  {k:'SR',ko:'영웅', col:'#C4708B', bg:'#FBE6EC', lv:12, price:1500, coin:1875, xp:8,  wpg:2, odds:8},
+  {k:'UR',ko:'전설', col:'#C79A34', bg:'#FBF0D8', lv:20, price:4200, coin:5250, xp:16, wpg:3, odds:2}
+];
+
+/* ── six new petal architectures ───────────────────────── */
+SPECIES.push(
+{id:'morningglory',ko:'나팔꽃',la:'Ipomoea nil',mean:'덧없는 사랑',rar:1,
+ col:['#7B62C6','#9B80DA','#D6C8EE'],ctr:['#FBF6E2','#E4D89C'],stem:'#7E9E6E',leafC:['#8CB57F','#4C7350'],leaf:'heart',
+ head:{scale:1.02,layers:[L(5,52,50,'round','wide',{rot:0,c:0,dk:.16,dir:'in'}),
+   L(5,26,22,'round','wide',{rot:36,c:2,lt:.30,op:.9})],center:{type:'button',r:5}}},
+
+{id:'balloonf',ko:'도라지',la:'Platycodon grandiflorus',mean:'영원한 사랑',rar:1,
+ col:['#6E7FC8','#8E9EDA','#C6CEEE'],ctr:['#F3EFD6','#B7A85E'],stem:'#7E9E6E',leafC:['#9CBD8A','#5E8155'],leaf:'ovate',
+ head:{scale:1.04,layers:[L(5,54,42,'point','ovate',{rot:0,c:0,dk:.18}),
+   L(5,22,16,'point','ovate',{rot:36,c:2,op:.55})],center:{type:'stamen',r:5,n:5,len:14}}},
+
+{id:'campanula',ko:'초롱꽃',la:'Campanula punctata',mean:'감사',rar:1,
+ col:['#EFE4CE','#FAF3E4','#FFFDF7'],ctr:['#D8C68E','#A08A3E'],stem:'#7E9E6E',leafC:['#93B884','#57804F'],leaf:'ovate',
+ head:{scale:1.0,layers:[
+   L(5,46,30,'round','obovate',{rot:180,c:0,tilt:1.22,dy:-18,dk:.14,jit:3}),
+   L(5,30,22,'round','obovate',{rot:216,c:1,tilt:1.22,dy:-16,op:.9,jit:3}),
+   L(3,20,26,'point','lance',{rot:0,arc:130,c:1,dy:-24,op:.0})],center:{type:'none'}}},
+
+{id:'marigold',ko:'매리골드',la:'Tagetes patula',mean:'반드시 오고야 할 행복',rar:1,
+ col:['#E48A2A','#F1A845','#F9CE84'],ctr:['#D97B18','#9E5408'],stem:'#7E9E6E',leafC:['#8CB57F','#4C7350'],leaf:'lobed',
+ head:{scale:.96,layers:[L(16,44,22,'round','obovate',{rot:0,c:0,dk:.18,jit:9}),
+   L(15,36,20,'round','obovate',{rot:12,c:1,jit:9}),
+   L(13,28,18,'round','obovate',{rot:6,c:1,lt:.16,jit:9}),
+   L(11,20,16,'round','obovate',{rot:16,c:2,jit:9})],center:{type:'button',r:4}}},
+
+{id:'lycoris',ko:'상사화',la:'Lycoris squamigera',mean:'이룰 수 없는 사랑',rar:3,
+ col:['#DE8AB0','#EDABC8','#F8D6E4'],ctr:['#F2D98E','#C09A34'],stem:'#8AA87A',leafC:['#9CBD8A','#5E8155'],leaf:'strap',
+ head:{scale:1.08,layers:[L(6,64,13,'strap','even',{rot:0,c:0,curl:.30,dk:.16,jit:7}),
+   L(6,52,11,'strap','even',{rot:30,c:1,curl:.34,jit:7})],
+ center:{type:'stamen',r:4,n:8,len:38}}},
+
+{id:'cattleya',ko:'카틀레야',la:'Cattleya labiata',mean:'성숙한 매력',rar:4,
+ col:['#B4519E','#CC74B6','#E7B2D8'],ctr:['#F3D96E','#B78F22'],stem:'#6E9A6B',leafC:['#7FAE7E','#3F6647'],leaf:'obovate',
+ head:{scale:1.04,layers:[
+   L(2,50,30,'point','lance',{rot:0,arc:120,c:0,dk:.18,jit:2}),
+   L(1,46,26,'point','lance',{rot:0,c:0,jit:0}),
+   L(2,44,38,'round','obovate',{rot:180,arc:120,c:1,jit:2}),
+   L(1,38,40,'frill','wide',{rot:180,c:2,dy:8,jit:0,dir:'in'})],
+ center:{type:'button',r:4}}}
+);
+
+/* ── 64 more species, each built on an existing architecture ── */
+function cloneSp(baseId,o){
+  const b=SPECIES.find(s=>s.id===baseId);
+  return {id:o.id,ko:o.ko,la:o.la,mean:o.mean,rar:o.rar,
+    col:o.col, ctr:o.ctr||b.ctr, stem:o.stem||b.stem,
+    leafC:o.leafC||b.leafC, leaf:o.leaf||b.leaf,
+    head:b.head, composite:b.composite};
+}
+const MORE=[
+/* base           id             한글        학명                          꽃말                          등급 색상 3단 */
+['gerbera',  'dandelion','민들레','Taraxacum platycarpum','감사하는 마음',1,['#E8B62C','#F3CE5C','#FAE79C']],
+['pansy',    'violet','제비꽃','Viola mandshurica','겸양',1,['#6A5AA8','#8878C4','#C3B6E2']],
+['azalea',   'balsam','봉숭아','Impatiens balsamina','나를 건드리지 마세요',1,['#DB6E8E','#EC9AB2','#F8D2DE']],
+['cosmos',   'portulaca','채송화','Portulaca grandiflora','가련함',1,['#E0508E','#F084B0','#F9C4D9']],
+['carnation','celosia','맨드라미','Celosia cristata','시들지 않는 사랑',1,['#C22E3E','#DC5A64','#EE9AA0']],
+['azalea',   'fourocl','분꽃','Mirabilis jalapa','소심',1,['#D9469A','#E97CB8','#F6BEDC']],
+['gerbera',  'calendula','금잔화','Calendula officinalis','이별의 슬픔',1,['#E88A22','#F2AA50','#FAD298']],
+['morningglory','petunia','피튜니아','Petunia hybrida','당신과 함께라면',1,['#9448A8','#B172C0','#DCBCE2']],
+['dahlia',   'zinnia','백일홍','Zinnia elegans','인연',1,['#E4694E','#F08E74','#F8C0AE']],
+['chrys',    'aster','과꽃','Callistephus chinensis','믿는 사랑',1,['#8A62BE','#A684D2','#D0BEE8']],
+['hibiscus', 'hollyhock','접시꽃','Alcea rosea','풍요',1,['#E497BC','#F0BAD4','#FAE0EC']],
+['gerbera',  'coreopsis','금계국','Coreopsis lanceolata','상쾌한 기분',1,['#EEC22E','#F5D662','#FBEDAA']],
+['sunflower','rudbeckia','루드베키아','Rudbeckia hirta','영원한 행복',1,['#E9A81E','#F2C34E','#F9E094'],['#6B4622','#3A2410']],
+['lavender', 'salvia','샐비어','Salvia splendens','정열',1,['#CE2F34','#E0575C','#F09A9C']],
+['babysbreath','alyssum','알리섬','Lobularia maritima','뛰어난 미모',1,['#F3EEEA','#FFFCFA','#FFFFFF']],
+['pansy',    'viola','비올라','Viola cornuta','성실',1,['#7C5FA8','#F0C64E','#F7E6A8']],
+['balloonf', 'forsythia','개나리','Forsythia koreana','희망',1,['#EFC02A','#F6D45E','#FBEAA6']],
+['babysbreath','cornus','산수유','Cornus officinalis','지속',1,['#EBC63E','#F4DC7C','#FBF0C2']],
+['forgetmenot','canola','유채꽃','Brassica napus','쾌활',1,['#EFC72E','#F5D962','#FBEEA8']],
+['babysbreath','clover','토끼풀','Trifolium repens','행운',1,['#EEF1E8','#FBFDF8','#FFFFFF']],
+['cherry',   'primrose','앵초','Primula sieboldii','행복의 열쇠',1,['#E48CB2','#F0B4CC','#FADEE8']],
+['daisy',    'chamomile','캐모마일','Matricaria chamomilla','역경 속의 힘',1,['#EDE6DC','#FBF6F0','#FFFFFF']],
+['forgetmenot','nemophila','네모필라','Nemophila menziesii','어디에서나 성공',1,['#6EA6E0','#93C0EC','#C8DFF6']],
+['babysbreath','statice','스타티스','Limonium sinuatum','변치 않는 마음',1,['#8C6EC0','#A98ED4','#D2C4EA']],
+['marigold', 'gomphrena','천일홍','Gomphrena globosa','변치 않는 사랑',1,['#C4479A','#D874B4','#EEB6DA']],
+['hibiscus', 'nasturtium','한련화','Tropaeolum majus','애국심',1,['#E8781E','#F29E50','#FAC898']],
+
+['cosmos',   'cornflower','수레국화','Centaurea cyanus','행복',2,['#4B6CC4','#7189D8','#B4C0EC']],
+['lavender', 'stock','스토크','Matthiola incana','영원한 아름다움',2,['#DE86B4','#EBAACC','#F7D8E6']],
+['lavender', 'delphinium','델피니움','Delphinium grandiflorum','당신을 행복하게',2,['#3F63C0','#6A86D6','#AEBEEC']],
+['freesia',  'gladiolus','글라디올러스','Gladiolus hybridus','밀회',2,['#D4374E','#E46A7C','#F2A8B4']],
+['peony',    'lisianthus','리시안셔스','Eustoma grandiflorum','변치 않는 사랑',2,['#A886C8','#C0A6DA','#DFD2EE']],
+['peony',    'ranunculus','라넌큘러스','Ranunculus asiaticus','매력',2,['#EA9450','#F3B47C','#FADBC0']],
+['marigold', 'scabiosa','스카비오사','Scabiosa atropurpurea','이룰 수 없는 사랑',2,['#8E76C0','#A996D4','#D2C8EA']],
+['lily',     'alstro','알스트로메리아','Alstroemeria aurea','배려',2,['#E890B2','#F0B2C8','#FADCE6']],
+['lavender', 'hyacinth','히아신스','Hyacinthus orientalis','겸손한 사랑',2,['#8460C4','#A184D6','#CFC0EC']],
+['lavender', 'muscari','무스카리','Muscari armeniacum','실망',2,['#37479E','#5C6CBA','#A2ACDA']],
+
+['tulip',    'crocus','크로커스','Crocus vernus','청춘의 기쁨',3,['#8A62C8','#A684DA','#D0BEEE']],
+['campanula','lilyvalley','은방울꽃','Convallaria majalis','다시 찾은 행복',3,['#F2EFE8','#FDFBF6','#FFFFFF']],
+['lily',     'tigerlily','참나리','Lilium lancifolium','순결',3,['#E4741E','#F09A50','#F8C698']],
+['lily',     'daylily','원추리','Hemerocallis fulva','기다리는 마음',3,['#EDB42A','#F4CB5E','#FBE7A6']],
+['lycoris',  'redspider','꽃무릇','Lycoris radiata','참사랑',3,['#D62828','#E85C54','#F49E96']],
+['cherry',   'bougainvillea','부겐빌레아','Bougainvillea glabra','열정',3,['#D4359A','#E46CB6','#F2AEDA']],
+['morningglory','campsis','능소화','Campsis grandiflora','명예',3,['#E4761E','#F09C4E','#F8C894']],
+['carnation','crapemyrtle','배롱나무꽃','Lagerstroemia indica','꿈',3,['#DC6EA6','#EA9CC2','#F7CEE0']],
+['peony',    'mudan','모란','Paeonia suffruticosa','부귀',3,['#B02440','#C9526A','#E29AA8']],
+['cherry',   'plum','매화','Prunus mume','고결',3,['#F1E6E4','#FCF6F5','#FFFFFF']],
+['tulip',    'calla','칼라','Zantedeschia aethiopica','순결',3,['#F0EDE6','#FBF9F4','#FFFFFF']],
+['hibiscus', 'anthurium','안스리움','Anthurium andraeanum','사랑에 번민하는 마음',3,['#C42A34','#D85A60','#EC9CA0']],
+['hydrangea','agapanthus','아가판서스','Agapanthus africanus','사랑의 소식',3,['#5A78CE','#7F96DC','#BAC6EE']],
+
+['cattleya', 'phalaenopsis','팔레놉시스','Phalaenopsis amabilis','행복이 날아온다',4,['#EFE7EA','#FBF6F8','#FFFFFF']],
+['cattleya', 'vanda','반다','Vanda coerulea','우아',4,['#4A6EC0','#7189D4','#B2C0EA']],
+['cattleya', 'paphio','파피오페딜룸','Paphiopedilum insigne','관능미',4,['#8C7A34','#AC9A52','#D2C48E']],
+['peony',    'whitepeony','백작약','Paeonia japonica','수줍음',4,['#F0EAE4','#FCF8F4','#FFFFFF']],
+['rose',     'blackrose','흑장미','Rosa Black Baccara','당신은 영원히 나의 것',4,['#4A1020','#71203A','#A04A62']],
+['rose',     'bluerose','블루로즈','Rosa Applause','불가능을 이루다',4,['#5A64C0','#7E88D4','#BAC0EA']],
+['lycoris',  'epiphyllum','월하미인','Epiphyllum oxypetalum','덧없는 사랑',4,['#F2EEE8','#FDFBF6','#FFFFFF']],
+['campanula','fritillaria','왕관백합','Fritillaria imperialis','위엄',4,['#E07A1E','#EC9E4E','#F6C894']],
+['hydrangea','rhodo','만병초','Rhododendron brachycarpum','위엄',4,['#F0DDE4','#F9EDF1','#FFFAFC']],
+['campanula','snowdrop','설강화','Galanthus nivalis','희망',4,['#EEF2EA','#FBFDF8','#FFFFFF']],
+
+['cattleya', 'ghostorchid','유령난','Dendrophylax lindenii','보이지 않는 아름다움',5,['#E4EEE6','#F4FAF5','#FFFFFF']],
+['camellia', 'middlemist','미들미스트 레드','Camellia Middlemist Red','세상에 단 둘',5,['#C43A62','#D8688A','#EEAABE']],
+['poppy',    'himalayanpoppy','파란양귀비','Meconopsis betonicifolia','하늘의 조각',5,['#2F6ECE','#5A8FDE','#A2BEEE']],
+['balloonf', 'edelweiss','에델바이스','Leontopodium alpinum','소중한 추억',5,['#EDEDE6','#FBFBF6','#FFFFFF']],
+['camellia', 'franklinia','프랭클리니아','Franklinia alatamaha','잊혀진 아름다움',5,['#F1ECE4','#FCF9F4','#FFFFFF']]
+];
+MORE.forEach(m=>SPECIES.push(cloneSp(m[0],{
+  id:m[1],ko:m[2],la:m[3],mean:m[4],rar:m[5],col:m[6],ctr:m[7]
+})));
+
+/* ── rarity for the 30 originals ───────────────────────── */
+const RAR0={
+  tulip:1,daisy:1,cherry:1,cosmos:1,babysbreath:1,forgetmenot:1,jasmine:1,sweetpea:1,azalea:1,carnation:1,
+  rose:2,sunflower:2,hydrangea:2,lavender:2,daffodil:2,pansy:2,hibiscus:2,chrys:2,anemone:2,freesia:2,
+  gerbera:2,camellia:2,clematis:2,magnolia:2,iris:2,poppy:2,
+  lily:3,peony:3,dahlia:3,lotus:3
+};
+SPECIES.forEach(s=>{ if(RAR0[s.id]!==undefined) s.rar=RAR0[s.id]; });
+SPECIES.forEach((s,i)=>{ s.no=i+1; s.R=RARITY[s.rar]; });
+
+/* the 30 always-stocked seeds are the founding index */
+const STAPLE=Object.keys(RAR0);
+const SPECIAL_POOL=SPECIES.filter(s=>!STAPLE.includes(s.id));
+const byId=id=>SPECIES.find(s=>s.id===id);
+
+function rollRarity(){
+  let t=Math.random()*100;
+  for(let r=1;r<=5;r++){ t-=RARITY[r].odds; if(t<=0) return r; }
+  return 1;
+}
+function rollSpecial(n){
+  const out=[], seen=new Set();
+  let guard=0;
+  while(out.length<n && guard++<400){
+    const r=rollRarity();
+    const pool=SPECIAL_POOL.filter(s=>s.rar===r&&!seen.has(s.id));
+    if(!pool.length) continue;
+    const s=pool[(Math.random()*pool.length)|0];
+    seen.add(s.id); out.push(s);
+  }
+  return out;
+}
+
+/* ══════════════════════════════════════════════════════════
+   꽃이 피는 자리 — v0.3
+   쿼터뷰 밭 · 꽃 100종 · 희귀도 · 씨앗 상점 · 밭 확장
+   ══════════════════════════════════════════════════════════ */
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const clamp=(v,a,b)=>v<a?a:v>b?b:v;
+const easeOut=t=>1-Math.pow(1-t,3);
+const backOut=t=>{const c=1.7;return 1+(c+1)*Math.pow(t-1,3)+c*Math.pow(t-1,2);};
+const NUM=n=>n.toLocaleString('ko-KR');
+
+/* ── projection: 45° azimuth, 55° elevation, orthographic ── */
+const ELEV=55, TW=78, TH=Math.round(TW*Math.sin(ELEV*Math.PI/180)); // 64
+const HW=TW/2, HH=TH/2, BED=9;
+const tileX=(r,c)=>(c-r)*HW;
+const tileY=(r,c)=>(c+r)*HH;
+const pickTile=(wx,wy)=>{const u=wx/HW,v=wy/HH;return {c:Math.round((u+v)/2),r:Math.round((v-u)/2)};};
+
+/* ── land ──────────────────────────────────────────────── */
+const MAIN=8, EXPAND_LV=10, BN=4, BLOCK_PRICE=1500;
+const BLOCKS=[
+  {id:'N',ko:'북쪽 밭',r0:-5,c0:2},
+  {id:'W',ko:'서쪽 밭',r0:2,c0:-5},
+  {id:'E',ko:'동쪽 밭',r0:2,c0:9},
+  {id:'S',ko:'남쪽 밭',r0:9,c0:2}
+];
+const PLOTS=[], PMAP=new Map();
+function addPlot(r,c,blk){
+  const p={r,c,blk,sp:null,stage:0,wc:0,wet:0,pop:0,born:0};
+  PLOTS.push(p); PMAP.set(r+','+c,p);
+}
+for(let r=0;r<MAIN;r++) for(let c=0;c<MAIN;c++) addPlot(r,c,null);
+BLOCKS.forEach(b=>{ for(let i=0;i<BN;i++) for(let j=0;j<BN;j++) addPlot(b.r0+i,b.c0+j,b.id); });
+const ORDER=PLOTS.slice().sort((a,b)=>(a.r+a.c)-(b.r+b.c));
+
+/* ── state ─────────────────────────────────────────────── */
+const SIZE=[4,4,5,6,7,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8];
+const XPNEED=[0,4,7,11,16,22,30,40,52,66,82,100,120,142,166,192,220,250,282,316,1e9];
+const WCOST=5, WMAX=240, LOWW=.10;
+const ROT_MS=10*60*1000;
+const G={
+  lv:1, xp:0, coins:300, water:WMAX, dex:[], inv:{}, bought:new Set(),
+  cam:{x:0,y:0}, z:1, tool:'water', seed:null, started:false,
+  special:[], rotAt:0
+};
+const size=()=>SIZE[Math.min(G.lv,SIZE.length-1)];
+const own=p=> p.blk ? G.bought.has(p.blk) : (p.r<size()&&p.c<size());
+const preview=p=> p.blk ? (G.lv>=EXPAND_LV&&!G.bought.has(p.blk))
+                        : (p.r<=size()&&p.c<=size()&&p.r<MAIN&&p.c<MAIN);
+const eachOwn=fn=>{for(const p of PLOTS) if(own(p)) fn(p);};
+const seedsOwned=()=>SPECIES.filter(s=>(G.inv[s.id]|0)>0);
+
+/* ── canvas / camera ───────────────────────────────────── */
+const cv=$('#world'), ctx=cv.getContext('2d');
+let VW=0,VH=0,DPR=1;
+function sizeCanvas(){
+  const r=$('#stage').getBoundingClientRect();
+  DPR=Math.min(devicePixelRatio||1,2); VW=r.width; VH=r.height;
+  cv.width=VW*DPR; cv.height=VH*DPR; cv.style.width=VW+'px'; cv.style.height=VH+'px';
+}
+const ANCHOR=()=>VH*0.46;
+const sx=wx=>VW/2+(wx-G.cam.x)*G.z;
+const sy=wy=>ANCHOR()+(wy-G.cam.y)*G.z;
+const toWorld=(px,py)=>({x:(px-VW/2)/G.z+G.cam.x, y:(py-ANCHOR())/G.z+G.cam.y});
+function fieldBounds(){
+  let x0=1e9,x1=-1e9,y0=1e9,y1=-1e9;
+  for(const p of PLOTS){
+    if(!own(p)&&!preview(p)) continue;
+    const x=tileX(p.r,p.c), y=tileY(p.r,p.c);
+    x0=Math.min(x0,x-TW); x1=Math.max(x1,x+TW);
+    y0=Math.min(y0,y-TH); y1=Math.max(y1,y+TH*1.6);
+  }
+  if(x0>x1) return {x0:-200,x1:200,y0:-100,y1:300};
+  return {x0,x1,y0,y1};
+}
+function clampCam(){
+  const b=fieldBounds();
+  G.cam.x=clamp(G.cam.x,b.x0-20,b.x1+20);
+  G.cam.y=clamp(G.cam.y,b.y0-130,b.y1-20);
+}
+function centerCam(){const S=size();G.cam.x=0;G.cam.y=(S-1)*HH-52;clampCam();}
+let camTween=null;
+const camTo=(x,y,ms)=>{camTween={x0:G.cam.x,y0:G.cam.y,x1:x,y1:y,t:0,d:(ms||700)/1000};};
+function stepCam(dt){
+  if(!camTween) return;
+  camTween.t+=dt;
+  const k=easeOut(Math.min(camTween.t/camTween.d,1));
+  G.cam.x=camTween.x0+(camTween.x1-camTween.x0)*k;
+  G.cam.y=camTween.y0+(camTween.y1-camTween.y0)*k;
+  if(camTween.t>=camTween.d) camTween=null;
+  clampCam();
+}
+
+/* ── decor ─────────────────────────────────────────────── */
+const DECOR=[];
+function buildDecor(){
+  const back=-TH*4.4, R=rng(99);
+  DECOR.push({t:'house',x:-250,y:back-70});
+  DECOR.push({t:'green',x:270,y:back-40});
+  DECOR.push({t:'well', x:-470,y:230});
+  for(let i=0;i<13;i++) DECOR.push({t:'bush',x:-460+i*80,y:back+18,s:.7+R()*.3});
+  const trees=[[-560,-40],[-540,150],[560,150],[580,-30],[-330,-330],[380,-310],[-580,470],[570,470],[30,-390]];
+  trees.forEach(([x,y],i)=>DECOR.push({t:i%3===2?'bush':'tree',x,y,s:.85+R()*.45}));
+  for(let i=0;i<34;i++){
+    const a=R()*6.2832, d=560+R()*220;
+    DECOR.push({t:'wild',x:Math.cos(a)*d,y:Math.sin(a)*d*.62+260,s:.7+R()*.6,h:R()});
+  }
+  DECOR.sort((a,b)=>a.y-b.y);
+}
+function diamond(g,x,y,w,h){
+  g.beginPath();
+  g.moveTo(x,y-(h||HH)); g.lineTo(x+(w||HW),y); g.lineTo(x,y+(h||HH)); g.lineTo(x-(w||HW),y); g.closePath();
+}
+function shadow(g,x,y,rx,ry,a){
+  g.fillStyle=`rgba(74,86,52,${a||.20})`;
+  g.beginPath(); g.ellipse(x,y,rx,ry,0,0,6.2832); g.fill();
+}
+function drawDecor(g,d){
+  const s=d.s||1;
+  if(d.t==='tree'){
+    shadow(g,d.x,d.y,26*s,10*s);
+    g.fillStyle='#8A6247'; g.fillRect(d.x-4*s,d.y-40*s,8*s,40*s);
+    [['#8FBF74',0,-64,30],['#7FB067',-20,-48,24],['#A2CF84',18,-50,25],['#B6DC96',-4,-78,20]]
+      .forEach(([col,ox,oy,r])=>{g.fillStyle=col;g.beginPath();g.arc(d.x+ox*s,d.y+oy*s,r*s,0,6.2832);g.fill();});
+    g.fillStyle='#F3B7C9';
+    for(let i=0;i<4;i++){const a=i*1.9;g.beginPath();g.arc(d.x+Math.cos(a)*24*s,d.y-58*s+Math.sin(a)*16*s,3.2*s,0,6.2832);g.fill();}
+    return;
+  }
+  if(d.t==='bush'){
+    shadow(g,d.x,d.y,22*s,8*s);
+    [['#7FB067',-12,-12,16],['#93C378',10,-14,17],['#A8D189',-1,-24,15]]
+      .forEach(([col,ox,oy,r])=>{g.fillStyle=col;g.beginPath();g.arc(d.x+ox*s,d.y+oy*s,r*s,0,6.2832);g.fill();});
+    g.fillStyle='#F6D98C';
+    for(let i=0;i<3;i++){g.beginPath();g.arc(d.x-10*s+i*11*s,d.y-22*s+(i%2)*7*s,3*s,0,6.2832);g.fill();}
+    return;
+  }
+  if(d.t==='wild'){
+    const col=['#F3B7C9','#F6D98C','#C9B4E4','#FFFFFF'][(d.h*4)|0];
+    g.strokeStyle='#7FA867'; g.lineWidth=1.6*s; g.lineCap='round';
+    g.beginPath(); g.moveTo(d.x,d.y); g.lineTo(d.x+2*s,d.y-14*s); g.stroke();
+    g.fillStyle=col;
+    for(let i=0;i<5;i++){const a=i*1.256;g.beginPath();
+      g.ellipse(d.x+2*s+Math.cos(a)*4*s,d.y-16*s+Math.sin(a)*3.4*s,3*s,2.4*s,a,0,6.2832);g.fill();}
+    return;
+  }
+  if(d.t==='well'){
+    shadow(g,d.x,d.y,30,12);
+    g.fillStyle='#9A8778'; diamond(g,d.x,d.y-8,30,22); g.fill();
+    g.fillStyle='#5B4A40'; diamond(g,d.x,d.y-12,22,16); g.fill();
+    g.strokeStyle='#B08A63'; g.lineWidth=5;
+    g.beginPath(); g.moveTo(d.x-18,d.y-14); g.lineTo(d.x-18,d.y-52); g.stroke();
+    g.beginPath(); g.moveTo(d.x+18,d.y-14); g.lineTo(d.x+18,d.y-52); g.stroke();
+    g.fillStyle='#C97F72';
+    g.beginPath(); g.moveTo(d.x-30,d.y-50); g.lineTo(d.x,d.y-70); g.lineTo(d.x+30,d.y-50); g.closePath(); g.fill();
+    return;
+  }
+  if(d.t==='house'||d.t==='green'){
+    const isH=d.t==='house';
+    const wl=isH?'#FCF2E6':'#E4F3F4', wr=isH?'#EBD9C6':'#CBE5E8';
+    const rl=isH?'#D2968A':'#9CC4C9', rr=isH?'#B87A70':'#7FA9B0';
+    const w=isH?96:74, dp=isH?58:46, h=isH?52:44, bx=d.x, by=d.y;
+    shadow(g,bx,by,w*.95,dp*.55,.18);
+    g.fillStyle=wl;
+    g.beginPath(); g.moveTo(bx-w,by-dp*.5); g.lineTo(bx,by); g.lineTo(bx,by-h); g.lineTo(bx-w,by-dp*.5-h); g.closePath(); g.fill();
+    g.fillStyle=wr;
+    g.beginPath(); g.moveTo(bx+w,by-dp*.5); g.lineTo(bx,by); g.lineTo(bx,by-h); g.lineTo(bx+w,by-dp*.5-h); g.closePath(); g.fill();
+    const ry=by-dp*.5-h, peak=ry-(isH?46:34), ov=10;
+    g.fillStyle=rl;
+    g.beginPath(); g.moveTo(bx-w-ov,ry+4); g.lineTo(bx,by-h+6); g.lineTo(bx,peak+16); g.lineTo(bx-w*.5,peak); g.closePath(); g.fill();
+    g.fillStyle=rr;
+    g.beginPath(); g.moveTo(bx+w+ov,ry+4); g.lineTo(bx,by-h+6); g.lineTo(bx,peak+16); g.lineTo(bx+w*.5,peak); g.closePath(); g.fill();
+    g.fillStyle=isH?'#E8AFA2':'#B6D6DB';
+    g.beginPath(); g.moveTo(bx-w-ov,ry+4); g.lineTo(bx-w*.5,peak); g.lineTo(bx+w*.5,peak); g.lineTo(bx+w+ov,ry+4);
+    g.lineTo(bx,ry-6); g.closePath(); g.fill();
+    g.fillStyle=isH?'#F4DDAB':'#CFEAEC';
+    g.save(); g.translate(bx-w*.5,by-dp*.25-h*.55); g.transform(1,.28,0,1,0,0); g.fillRect(-15,-13,30,26); g.restore();
+    g.save(); g.translate(bx+w*.5,by-dp*.25-h*.55); g.transform(1,-.28,0,1,0,0); g.fillRect(-15,-13,30,26); g.restore();
+    if(isH){ g.fillStyle='#B98368';
+      g.save(); g.translate(bx+w*.14,by-dp*.06-h*.30); g.transform(1,-.28,0,1,0,0); g.fillRect(-13,-20,26,40); g.restore(); }
+    for(let i=0;i<5;i++){g.fillStyle=['#F3B7C9','#F6D98C','#C9B4E4','#FFF','#F3B7C9'][i];
+      g.beginPath(); g.arc(bx-w*.8+i*w*.4,by+4+(i%2)*5,5,0,6.2832); g.fill();}
+  }
+}
+
+/* ── particles (world space) ───────────────────────────── */
+let parts=[];
+const addBead=(x,y)=>parts.push({t:'b',x,y,r:1.5+Math.random()*1.7,ph:Math.random()*6.28,life:2.2+Math.random()*2});
+const addSpark=(x,y,s,d)=>parts.push({t:'s',x,y,s:s||6,l:1,life:.6+Math.random()*.6,rot:Math.random()*3.14,delay:d||0});
+const addPetal=(x,y,c)=>parts.push({t:'p',x,y,vx:(Math.random()-.5)*1.8,vy:-40-Math.random()*50,rot:Math.random()*6.28,vr:(Math.random()-.5)*.18,l:1,life:1.8,c});
+const addRing=(x,y)=>parts.push({t:'r',x,y,l:1,life:.9});
+const addPuff=(x,y)=>parts.push({t:'u',x,y,vx:(Math.random()-.5)*36,vy:-30-Math.random()*30,l:1,life:.6});
+function star(g,x,y,r,a,rot){
+  g.save(); g.translate(x,y); g.rotate(rot);
+  const gr=g.createRadialGradient(0,0,0,0,0,r*2.2);
+  gr.addColorStop(0,`rgba(255,255,255,${.55*a})`);
+  gr.addColorStop(.32,`rgba(255,246,212,${.30*a})`);
+  gr.addColorStop(1,'rgba(255,240,198,0)');
+  g.fillStyle=gr; g.beginPath(); g.arc(0,0,r*2.2,0,6.2832); g.fill();
+  g.fillStyle=`rgba(255,255,255,${.92*a})`;
+  g.beginPath(); g.moveTo(0,-r);
+  g.quadraticCurveTo(r*.16,-r*.16,r,0); g.quadraticCurveTo(r*.16,r*.16,0,r);
+  g.quadraticCurveTo(-r*.16,r*.16,-r,0); g.quadraticCurveTo(-r*.16,-r*.16,0,-r);
+  g.fill(); g.restore();
+}
+function stepParts(g,dt){
+  for(let i=parts.length-1;i>=0;i--){
+    const p=parts[i];
+    if(p.t==='d'){
+      p.vy+=520*dt; p.x+=p.vx*dt; p.y+=p.vy*dt;
+      const sp2=Math.min(p.vy/620,1);
+      g.fillStyle='rgba(148,214,233,.88)';
+      g.beginPath(); g.ellipse(p.x,p.y,1.9,1.9+sp2*4.2,0,0,6.2832); g.fill();
+      g.fillStyle='rgba(255,255,255,.8)';
+      g.beginPath(); g.ellipse(p.x-.6,p.y-1,.6,1.2,0,0,6.2832); g.fill();
+      if(p.y>(p.gy===undefined?1e5:p.gy)){ parts.splice(i,1); if(Math.random()<.5) addSpark(p.x,p.y,4); }
+      continue;
+    }
+    if(p.t==='b'){
+      p.life-=dt; p.ph+=dt*3.4;
+      if(p.life<=0){parts.splice(i,1);continue;}
+      const a=Math.min(p.life,1);
+      g.fillStyle=`rgba(176,224,240,${.55*a})`;
+      g.beginPath(); g.arc(p.x,p.y,p.r,0,6.2832); g.fill();
+      g.fillStyle=`rgba(255,255,255,${.9*a})`;
+      g.beginPath(); g.arc(p.x-p.r*.3,p.y-p.r*.34,p.r*.36,0,6.2832); g.fill();
+      const tw=(Math.sin(p.ph)+1)/2;
+      if(tw>.92) star(g,p.x,p.y-p.r*.4,p.r*2.5,a*(tw-.92)/.08,p.ph);
+      continue;
+    }
+    if(p.t==='s'){
+      if(p.delay>0){p.delay-=dt;continue;}
+      p.l-=dt/p.life;
+      if(p.l<=0){parts.splice(i,1);continue;}
+      const a=Math.sin(p.l*Math.PI);
+      star(g,p.x,p.y,p.s*(.6+a*.7),a,p.rot+(1-p.l)*1.2);
+      continue;
+    }
+    if(p.t==='p'){
+      p.vy+=150*dt; p.x+=p.vx; p.y+=p.vy*dt; p.rot+=p.vr; p.l-=dt/p.life;
+      if(p.l<=0){parts.splice(i,1);continue;}
+      g.save(); g.translate(p.x,p.y); g.rotate(p.rot); g.globalAlpha=Math.min(p.l*1.7,1);
+      g.fillStyle=p.c; g.beginPath(); g.ellipse(0,0,3.2,5.6,0,0,6.2832); g.fill(); g.restore();
+      continue;
+    }
+    if(p.t==='u'){
+      p.vy+=120*dt; p.x+=p.vx*dt; p.y+=p.vy*dt; p.l-=dt/p.life;
+      if(p.l<=0){parts.splice(i,1);continue;}
+      g.globalAlpha=p.l*.6; g.fillStyle='#A97C56';
+      g.beginPath(); g.arc(p.x,p.y,2.4,0,6.2832); g.fill(); g.globalAlpha=1;
+      continue;
+    }
+    if(p.t==='r'){
+      p.l-=dt/p.life;
+      if(p.l<=0){parts.splice(i,1);continue;}
+      const k=1-p.l, R=14+k*86;
+      const gr=g.createRadialGradient(p.x,p.y,R*.55,p.x,p.y,R);
+      gr.addColorStop(0,'rgba(255,240,200,0)');
+      gr.addColorStop(.7,`rgba(255,244,214,${.55*p.l})`);
+      gr.addColorStop(1,'rgba(255,244,214,0)');
+      g.fillStyle=gr; g.beginPath(); g.arc(p.x,p.y,R,0,6.2832); g.fill();
+    }
+  }
+}
+const plotTop=p=>({x:tileX(p.r,p.c), y:tileY(p.r,p.c)});
+function splash(p){
+  const t=plotTop(p), h=STEM_H[p.stage]||10;
+  for(let i=0;i<11;i++) parts.push({t:'d',x:t.x+(Math.random()-.5)*34,y:t.y-120-Math.random()*30,
+    vx:(Math.random()-.5)*20,vy:120+Math.random()*80,gy:t.y-h*.55});
+  for(let i=0;i<7;i++){
+    const a=Math.random()*6.2832, r=Math.sqrt(Math.random())*(p.stage>=4?26:14);
+    addBead(t.x+Math.cos(a)*r, t.y-h*.6+Math.sin(a)*r*.7);
+  }
+  for(let i=0;i<5;i++) addSpark(t.x+(Math.random()-.5)*36, t.y-h*.7-Math.random()*20, 4+Math.random()*4, Math.random()*.5);
+  p.wet=1;
+}
+function bloomFx(p){
+  const t=plotTop(p), h=STEM_H[4];
+  addRing(t.x,t.y-h);
+  for(let i=0;i<14;i++) addSpark(t.x+(Math.random()-.5)*70,t.y-h+(Math.random()-.5)*54,5+Math.random()*6,Math.random()*.6);
+  for(let i=0;i<8;i++) addPetal(t.x,t.y-h,p.sp.col[1+((Math.random()*2)|0)]);
+}
+const puff=p=>{const t=plotTop(p);for(let i=0;i<7;i++) addPuff(t.x+(Math.random()-.5)*26,t.y);};
+
+/* ── render ────────────────────────────────────────────── */
+let last=performance.now();
+function frame(now){
+  const dt=Math.min((now-last)/1000,.05); last=now;
+  regen(dt); stepCam(dt); rotTick();
+
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+  const bg=ctx.createLinearGradient(0,0,0,VH);
+  bg.addColorStop(0,'#B7DEA0'); bg.addColorStop(.5,'#A7D291'); bg.addColorStop(1,'#94C37E');
+  ctx.fillStyle=bg; ctx.fillRect(0,0,VW,VH);
+
+  ctx.save();
+  ctx.translate(VW/2,ANCHOR()); ctx.scale(G.z,G.z); ctx.translate(-G.cam.x,-G.cam.y);
+
+  const fb=fieldBounds();
+  DECOR.forEach(d=>{ if(d.y<fb.y0) drawDecor(ctx,d); });
+
+  const S=size();
+  ctx.fillStyle='rgba(120,160,96,.22)';
+  diamond(ctx,0,(S-1)*HH,(S+.55)*HW,(S+.55)*HH); ctx.fill();
+  ctx.fillStyle='rgba(255,255,255,.07)';
+  diamond(ctx,0,(S-1)*HH,(S+.15)*HW,(S+.15)*HH); ctx.fill();
+  BLOCKS.forEach(b=>{
+    if(!G.bought.has(b.id)) return;
+    const cx=tileX(b.r0+1.5,b.c0+1.5), cy=tileY(b.r0+1.5,b.c0+1.5);
+    ctx.fillStyle='rgba(120,160,96,.22)'; diamond(ctx,cx,cy,(BN+.6)*HW,(BN+.6)*HH); ctx.fill();
+  });
+
+  for(const p of ORDER){
+    if(p.born>0) p.born=Math.max(0,p.born-dt/.45);
+    if(p.pop>0)  p.pop=Math.max(0,p.pop-dt/.75);
+    if(p.wet>0)  p.wet=Math.max(0,p.wet-dt/9);
+    drawPlot(ctx,p);
+  }
+  stepParts(ctx,dt);
+  DECOR.forEach(d=>{ if(d.y>=fb.y0) drawDecor(ctx,d); });
+  ctx.restore();
+
+  placeOverlays();
+  requestAnimationFrame(frame);
+}
+
+function drawPlot(g,p){
+  const x=tileX(p.r,p.c), y=tileY(p.r,p.c);
+  if(!own(p)){
+    if(!preview(p)) return;
+    const buy=!!p.blk;
+    g.save(); g.setLineDash([5,8]);
+    g.strokeStyle=buy?'rgba(255,236,180,.72)':'rgba(255,255,255,.34)'; g.lineWidth=buy?2:1.5;
+    diamond(g,x,y,HW-7,HH-6); g.stroke();
+    g.setLineDash([]); g.globalAlpha=buy?.85:.5;
+    g.strokeStyle=buy?'rgba(255,240,190,.95)':'rgba(255,255,255,.9)'; g.lineWidth=2;
+    g.beginPath(); g.moveTo(x-6,y); g.lineTo(x+6,y); g.moveTo(x,y-5); g.lineTo(x,y+5); g.stroke();
+    g.restore();
+    return;
+  }
+  const k=p.born>0?backOut(1-p.born):1;
+  g.save();
+  if(k!==1){ g.translate(x,y); g.scale(k,k); g.translate(-x,-y); }
+
+  const BW=HW-5, BH=HH-4.1;
+  g.fillStyle='#71492F';
+  g.beginPath(); g.moveTo(x-BW,y); g.lineTo(x,y+BH); g.lineTo(x,y+BH+BED); g.lineTo(x-BW,y+BED); g.closePath(); g.fill();
+  g.fillStyle='#5C3A24';
+  g.beginPath(); g.moveTo(x+BW,y); g.lineTo(x,y+BH); g.lineTo(x,y+BH+BED); g.lineTo(x+BW,y+BED); g.closePath(); g.fill();
+
+  const vv=((p.r*7+p.c*13)%5)*.018-.036;
+  const gr=g.createLinearGradient(x-BW,y-BH,x+BW,y+BH);
+  gr.addColorStop(0,tint('#CC996E',.10+vv)); gr.addColorStop(.48,tint('#AE7B53',.06+vv)); gr.addColorStop(1,tint('#8C5E38',vv>0?vv:0));
+  g.fillStyle=gr; diamond(g,x,y,BW,BH); g.fill();
+
+  g.strokeStyle='rgba(88,56,34,.26)'; g.lineWidth=1.5;
+  for(const f of [.32,.55,.78]){
+    g.beginPath(); g.moveTo(x-BW+f*BW,y-f*BH); g.lineTo(x+f*BW,y+BH-f*BH); g.stroke();
+  }
+  g.strokeStyle='rgba(255,236,208,.40)'; g.lineWidth=1.3; diamond(g,x,y,BW,BH); g.stroke();
+
+  if(p.wet>0){
+    g.save(); g.globalAlpha=Math.min(p.wet,1)*.34;
+    g.fillStyle='#3F7D96'; diamond(g,x,y,BW,BH); g.fill();
+    g.globalAlpha=Math.min(p.wet,1)*.5; g.fillStyle='rgba(255,255,255,.55)';
+    g.beginPath(); g.ellipse(x-10,y-4,5,2.4,-.4,0,6.2832); g.fill();
+    g.beginPath(); g.ellipse(x+12,y+5,4,2,-.4,0,6.2832); g.fill();
+    g.restore();
+  }
+
+  if(p.sp){
+    if(p.stage===0){
+      g.fillStyle='#6B4630'; g.beginPath(); g.ellipse(x,y-1,5,3.4,0,0,6.2832); g.fill();
+      g.fillStyle='#8C6242'; g.beginPath(); g.ellipse(x-1,y-2,3.4,2.2,0,0,6.2832); g.fill();
+    }else{
+      shadow(g,x,y+2,20,7,.16);
+      const spr=plantSprite(p.sp,p.stage);
+      const s=p.pop>0?(.55+.45*backOut(1-p.pop)):1;
+      g.save(); g.translate(x,y); g.scale(s,s);
+      g.drawImage(spr,-SPW/2,-SPBASE,SPW,SPH);
+      g.restore();
+    }
+  }
+  if(HOVER===p){
+    g.strokeStyle='rgba(255,255,255,.92)'; g.lineWidth=2.4; diamond(g,x,y,BW,BH); g.stroke();
+  }
+  if(HOVER===p&&G.tool==='cut'&&p.stage>=4){
+    g.strokeStyle='rgba(255,255,255,.9)'; g.lineWidth=2;
+    g.beginPath(); g.ellipse(x,y-STEM_H[4]-6,28,24,0,0,6.2832); g.stroke();
+  }
+  g.restore();
+}
+
+function placeOverlays(){
+  const S=size();
+  const gEl=$('#girl');
+  gEl.style.left=sx((S-1)*HW+72)+'px';
+  gEl.style.top=sy((S-1)*HH+44)+'px';
+  gEl.style.width=(96*G.z)+'px';
+}
+
+/* ── input: single-finger paint/pan, two-finger pinch ──── */
+let HOVER=null, drag=null, painted=null, pinch=null;
+const PTR=new Map();
+const localPt=e=>{const r=cv.getBoundingClientRect();return {x:e.clientX-r.left,y:e.clientY-r.top};};
+function tileAt(px,py){
+  const w=toWorld(px,py), t=pickTile(w.x,w.y);
+  return PMAP.get(t.r+','+t.c)||null;
+}
+const tileUnder=(px,py)=>{const p=tileAt(px,py);return (p&&own(p))?p:null;};
+function flowerUnder(px,py){
+  const w=toWorld(px,py); let best=null;
+  for(const p of ORDER){
+    if(!own(p)||!p.sp||p.stage<4) continue;
+    const cx=tileX(p.r,p.c), cy=tileY(p.r,p.c)-STEM_H[4]-6;
+    const dx=(w.x-cx)/30, dy=(w.y-cy)/27;
+    if(dx*dx+dy*dy<=1) best=p;               // later in ORDER = drawn in front
+  }
+  return best;
+}
+const targetAt=(px,py)=> G.tool==='cut' ? flowerUnder(px,py) : tileUnder(px,py);
+
+function onDown(e){
+  if(!G.started) return;
+  PTR.set(e.pointerId,localPt(e));
+  if(PTR.size>=2){ drag=null; painted=null; hideCan(); startPinch(); return; }
+  try{cv.setPointerCapture(e.pointerId);}catch(_){}
+  const q=localPt(e);
+  const locked=tileAt(q.x,q.y);
+  if(locked&&!own(locked)&&locked.blk&&preview(locked)){ askExpand(locked.blk); return; }
+  const t=targetAt(q.x,q.y);
+  if(G.tool!=='hand'&&t){
+    drag={mode:'paint',id:e.pointerId,lx:q.x,ly:q.y}; painted=new Set();
+    if(G.tool==='water') showCan(q);
+    applyTool(t);
+  }else{
+    drag={mode:'pan',id:e.pointerId,lx:q.x,ly:q.y};
+  }
+}
+function onMove(e){
+  if(!G.started) return;
+  const q=localPt(e);
+  if(PTR.has(e.pointerId)) PTR.set(e.pointerId,q);
+  if(PTR.size>=2){ updatePinch(); return; }
+  if(!drag){ if(PTR.size===0) HOVER=targetAt(q.x,q.y); return; }
+  if(drag.id!==e.pointerId) return;
+  if(drag.mode==='pan'){
+    camTween=null;
+    G.cam.x-=(q.x-drag.lx)/G.z; G.cam.y-=(q.y-drag.ly)/G.z;
+    drag.lx=q.x; drag.ly=q.y; clampCam();
+  }else{
+    const dx=q.x-drag.lx, dy=q.y-drag.ly;
+    const steps=Math.max(1,Math.ceil(Math.hypot(dx,dy)/9));
+    let hit=null;
+    for(let i=1;i<=steps;i++){
+      const t=targetAt(drag.lx+dx*i/steps, drag.ly+dy*i/steps);
+      if(t){ applyTool(t); hit=t; }
+    }
+    HOVER=hit;
+    if(G.tool==='water') showCan(q);
+    drag.lx=q.x; drag.ly=q.y;
+  }
+}
+function onUp(e){
+  if(e&&e.pointerId!==undefined) PTR.delete(e.pointerId); else PTR.clear();
+  if(PTR.size<2) pinch=null;
+  if(PTR.size===0){ drag=null; painted=null; hideCan(); HOVER=null; }
+  else if(drag&&e&&drag.id===e.pointerId){ drag=null; painted=null; hideCan(); }
+}
+function startPinch(){
+  const a=[...PTR.values()];
+  const d=Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y);
+  const mid={x:(a[0].x+a[1].x)/2,y:(a[0].y+a[1].y)/2};
+  pinch={d:Math.max(d,1),z:G.z,mid,world:toWorld(mid.x,mid.y)};
+  camTween=null;
+}
+function updatePinch(){
+  if(!pinch) { startPinch(); return; }
+  const a=[...PTR.values()];
+  if(a.length<2) return;
+  const d=Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y);
+  const mid={x:(a[0].x+a[1].x)/2,y:(a[0].y+a[1].y)/2};
+  G.z=clamp(pinch.z*(d/pinch.d),.5,1.4);
+  /* keep the world point under the two fingers pinned */
+  G.cam.x=pinch.world.x-(mid.x-VW/2)/G.z;
+  G.cam.y=pinch.world.y-(mid.y-ANCHOR())/G.z;
+  clampCam();
+}
+function showCan(q){
+  const c=$('#can'); c.classList.add('on');
+  c.style.left=(q.x-46)+'px'; c.style.top=(q.y-96)+'px';
+  c.style.transform='rotate(-28deg)';
+}
+function hideCan(){const c=$('#can');c.style.transform='rotate(0deg)';c.classList.remove('on');}
+
+/* ── actions ───────────────────────────────────────────── */
+function applyTool(p){
+  const key=p.r+','+p.c;
+  if(painted){ if(painted.has(key)) return; painted.add(key); }
+  if(G.tool==='seed') doPlant(p);
+  else if(G.tool==='water') doWater(p);
+  else if(G.tool==='cut') doHarvest(p);
+}
+function doPlant(p,silent){
+  if(p.sp||!G.seed) return false;
+  if((G.inv[G.seed.id]|0)<=0){
+    if(!silent) warn('씨앗이 없어요','상점에서 씨앗을 더 구해오세요');
+    return false;
+  }
+  G.inv[G.seed.id]--;
+  p.sp=G.seed; p.stage=0; p.wc=0; p.wet=0; p.pop=0; puff(p);
+  hud(); tutHit('plant'); return true;
+}
+function doWater(p,silent){
+  if(!p.sp||p.stage>=4) return false;
+  if(G.water<WCOST){
+    if(!silent) warn('물이 부족해요','우물에서 조금씩 채워지는 중이에요');
+    return false;
+  }
+  G.water-=WCOST; p.wc++;
+  const need=p.sp.R.wpg;
+  splash(p);
+  if(p.wc>=need){
+    p.wc=0; p.stage++;
+    if(p.stage===4){ p.pop=1; bloomFx(p); tutHit('bloom'); }
+  }
+  hud(); tutHit('water'); return true;
+}
+let cardQ=[], cardBusy=false;
+function doHarvest(p){
+  if(!p.sp||p.stage<4) return false;
+  const sp=p.sp, t=plotTop(p), R=sp.R;
+  for(let i=0;i<10;i++) addPetal(t.x,t.y-STEM_H[4],sp.col[1+((Math.random()*2)|0)]);
+  for(let i=0;i<6;i++) addSpark(t.x+(Math.random()-.5)*50,t.y-STEM_H[4]+(Math.random()-.5)*40,5);
+  if(!G.dex.includes(sp.id)){ G.dex.push(sp.id); cardQ.push(sp); }
+  G.coins+=R.coin; G.xp+=R.xp;
+  if(Math.random()<.5) G.inv[sp.id]=(G.inv[sp.id]|0)+1;
+  p.sp=null; p.stage=0; p.wc=0; p.wet=0;
+  hud(); checkLevel(); tutHit('harvest'); flushCards();
+  return true;
+}
+function batchPlant(){
+  if(!G.seed||(G.inv[G.seed.id]|0)<=0){ openSeeds(); return; }
+  let n=0; eachOwn(p=>{ if(doPlant(p,true)) n++; });
+  const left=(G.inv[G.seed.id]|0);
+  toast(n?`${G.seed.ko} ${n}칸에 뿌렸어요 · 남은 씨앗 ${left}개`:'빈 밭이 없거나 씨앗이 없어요');
+}
+function batchWater(){
+  let n=0,left=0;
+  eachOwn(p=>{ if(doWater(p,true)) n++; else if(p.sp&&p.stage<4) left++; });
+  if(!n&&left){ warn('물이 부족해요','우물에서 조금씩 채워지는 중이에요'); return; }
+  toast(n ? (left?`${n}칸에 물을 주었어요 · 물이 모자라 ${left}칸 남음`:`${n}칸에 물을 주었어요`) : '물 줄 밭이 없어요');
+}
+let _wt=0;
+function regen(dt){
+  if(G.water<WMAX){ G.water=Math.min(WMAX,G.water+dt*17); _wt+=dt; if(_wt>.25){_wt=0;hudWater();} }
+}
+function checkLevel(){
+  while(G.xp>=XPNEED[Math.min(G.lv,XPNEED.length-1)] && G.lv<20){
+    G.xp-=XPNEED[Math.min(G.lv,XPNEED.length-1)];
+    const before=size(); G.lv++; const after=size();
+    hud();
+    if(after>before){
+      for(const p of PLOTS) if(own(p)&&(p.r>=before||p.c>=before)) p.born=1;
+      toast(`레벨 ${G.lv} — 밭이 ${after*after}칸으로 넓어졌어요!`);
+      camTo(0,(after-1)*HH-52,900);
+    }else if(G.lv===EXPAND_LV){
+      toast('레벨 10 — 밭 바깥의 빈 땅을 살 수 있어요');
+    }else toast(`레벨 ${G.lv}`);
+  }
+}
+
+/* ── expansion purchase ────────────────────────────────── */
+function askExpand(blkId){
+  const b=BLOCKS.find(x=>x.id===blkId);
+  if(G.lv<EXPAND_LV){ warn('아직 살 수 없어요',`레벨 ${EXPAND_LV}부터 밭을 넓힐 수 있어요`); return; }
+  confirmAsk(b.ko+' 사기',
+    `한 칸 띄운 바깥 땅 <b>${BN*BN}칸</b>을 새로 일굽니다.<br>비용 <b>${NUM(BLOCK_PRICE)} 코인</b> · 보유 ${NUM(G.coins)} 코인`,
+    ()=>{
+      if(G.coins<BLOCK_PRICE){ warn('코인이 부족해요','꽃을 더 수확해 보세요'); return; }
+      G.coins-=BLOCK_PRICE; G.bought.add(blkId);
+      PLOTS.forEach(p=>{ if(p.blk===blkId) p.born=1; });
+      const cx=tileX(b.r0+1.5,b.c0+1.5), cy=tileY(b.r0+1.5,b.c0+1.5);
+      camTo(cx,cy-40,800);
+      hud(); toast(`${b.ko} ${BN*BN}칸을 일궜어요`);
+    });
+}
+
+/* ── HUD ───────────────────────────────────────────────── */
+function hud(){
+  $('#lvN').textContent=G.lv;
+  const extra=G.bought.size*BN*BN;
+  $('#lvSub').textContent='밭 '+(size()*size()+extra)+'칸';
+  $('#coinN').textContent=NUM(G.coins);
+  $('#dexN').textContent=G.dex.length;
+  const need=XPNEED[Math.min(G.lv,XPNEED.length-1)];
+  $('#xpBar').firstElementChild.style.width=Math.min(100,G.xp/need*100)+'%';
+  if(G.seed) $('#seedLa').textContent='보유 '+NUM(G.inv[G.seed.id]|0)+'개';
+  hudWater();
+}
+function hudWater(){
+  const r=G.water/WMAX;
+  $('#waterMini').firstElementChild.style.width=(r*100)+'%';
+  $('#waterChip').classList.toggle('low', r<=LOWW);
+}
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('on'),2000);}
+function warn(title,sub){
+  const w=$('#warn');
+  w.innerHTML=title+(sub?`<small>${sub}</small>`:'');
+  w.classList.add('on'); clearTimeout(w._t);
+  w._t=setTimeout(()=>w.classList.remove('on'),1900);
+}
+function tag(t){const e=$('#stepTag');if(!t){e.classList.remove('on');return;}e.textContent=t;e.classList.add('on');}
+function ringOn(sel){
+  const el=$(sel); if(!el){ringOff();return;}
+  const r=$('#ring'), b=$('#stage').getBoundingClientRect(), a=el.getBoundingClientRect();
+  r.style.left=(a.left-b.left+a.width/2)+'px'; r.style.top=(a.top-b.top+a.height/2)+'px';
+  r.classList.add('on');
+}
+const ringOff=()=>$('#ring').classList.remove('on');
+function setTool(t){
+  G.tool=t;
+  $$('.tool').forEach(b=>b.classList.toggle('sel',b.dataset.t===t));
+  tutHit('tool:'+t);
+}
+const rrChip=(sp,extra)=>`<span class="rr" style="background:${sp.R.bg};color:${sp.R.col}${extra||''}">${sp.R.ko}</span>`;
+
+/* ── confirm ───────────────────────────────────────────── */
+let cfYes=null;
+function confirmAsk(title,body,onYes){
+  $('#cfTitle').textContent=title;
+  $('#cfBody').innerHTML=body;
+  cfYes=onYes; $('#confirmOv').classList.add('on');
+}
+
+/* ── seeds ─────────────────────────────────────────────── */
+function flowerInner(sp){
+  const h=buildHead(sp,1);
+  return `<defs>${h.defs}</defs><g transform="scale(${sp.head.scale||1})">${h.body}</g>`;
+}
+function setSeed(sp){
+  G.seed=sp;
+  $('#seedArt').innerHTML=flowerInner(sp);
+  $('#seedKo').textContent=sp.ko;
+  $('#seedRr').outerHTML=`<span class="rr" id="seedRr" style="background:${sp.R.bg};color:${sp.R.col}">${sp.R.ko}</span>`;
+  hud();
+}
+let seedPick=null;
+function openSeeds(){
+  const list=seedsOwned();
+  seedPick=list.includes(G.seed)?G.seed:list[0]||null;
+  $('#seedSub').textContent=list.length?'고른 씨앗을 밭 위에 드래그해서 뿌려요':'가진 씨앗이 없어요 — 상점에서 사보세요';
+  $('#seedList').innerHTML=list.map(s=>`
+    <button class="seed${s===seedPick?' sel':''}" data-id="${s.id}">
+      ${rrChip(s)}${flowerSVG(s,84)}
+      <div class="nm">${s.ko}</div><div class="cnt">${NUM(G.inv[s.id]|0)}개</div>
+    </button>`).join('');
+  $('#seedOv').classList.add('on');
+}
+const closeSeeds=()=>$('#seedOv').classList.remove('on');
+
+/* ── shop ──────────────────────────────────────────────── */
+function rotateSpecial(){
+  G.special=rollSpecial(5).map(s=>s.id);
+  G.rotAt=Date.now()+ROT_MS;
+}
+let _rt=0;
+function rotTick(){
+  if(Date.now()>=G.rotAt){ rotateSpecial(); if($('#shopScreen').classList.contains('on')) drawShop(); }
+  if($('#shopScreen').classList.contains('on')){
+    const s=Math.max(0,Math.ceil((G.rotAt-Date.now())/1000));
+    const t=String((s/60)|0).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
+    if($('#rotTimer').textContent!==t) $('#rotTimer').textContent=t;
+  }
+}
+function itemHTML(sp,special){
+  const canLv=G.lv>=sp.R.lv, canCoin=G.coins>=sp.R.price*QTY_MIN;
+  return `<button class="item${special?' special':''}${canLv?'':' locked'}" data-id="${sp.id}">
+    <span class="own">보유 ${NUM(G.inv[sp.id]|0)}</span>
+    ${flowerSVG(sp,84)}
+    <span class="info">
+      <span class="nm">${sp.ko}</span>
+      <span class="meta">${rrChip(sp)} ${sp.la.split(' ')[0]}</span>
+      ${canLv?`<span class="price" style="${canCoin?'':'color:var(--plum3)'}">◎ ${NUM(sp.R.price)} · ${QTY_MIN}~${QTY_MAX}개</span>`
+             :`<span class="need">레벨 ${sp.R.lv} 필요</span>`}
+    </span></button>`;
+}
+function drawShop(){
+  $('#shopCoin').textContent=NUM(G.coins);
+  $('#shopLv').textContent=G.lv;
+  $('#shopSpecial').innerHTML=G.special.map(id=>itemHTML(byId(id),true)).join('');
+  $('#shopStaple').innerHTML=STAPLE.map(id=>itemHTML(byId(id),false)).join('');
+}
+const QTY_MIN=5, QTY_MAX=10;
+let buyState=null;
+function askBuy(id){
+  const sp=byId(id);
+  if(G.lv<sp.R.lv){ warn('레벨이 부족해요',`${sp.ko}는 레벨 ${sp.R.lv}부터 살 수 있어요`); return; }
+  buyState={sp,qty:QTY_MIN};
+  renderBuyDialog();
+  $('#confirmOv').classList.add('on');
+  cfYes=()=>{
+    if(!buyState) return;
+    const {sp,qty}=buyState, total=sp.R.price*qty;
+    if(G.coins<total){ warn('코인이 부족해요',`${NUM(total)} 코인이 필요해요`); return; }
+    G.coins-=total; G.inv[sp.id]=(G.inv[sp.id]|0)+qty;
+    hud(); drawShop(); toast(`${sp.ko} 씨앗 ${qty}개를 샀어요 · 보유 ${NUM(G.inv[sp.id])}개`);
+  };
+}
+function renderBuyDialog(){
+  const {sp,qty}=buyState, total=sp.R.price*qty;
+  $('#cfTitle').textContent=sp.ko+' 씨앗 구매';
+  $('#cfBody').innerHTML=`
+    <div class="qtyRow">
+      <button class="qtyBtn" data-d="-1" ${qty<=QTY_MIN?'disabled':''}>－</button>
+      <span class="qtyNum">${qty}개</span>
+      <button class="qtyBtn" data-d="1" ${qty>=QTY_MAX?'disabled':''}>＋</button>
+    </div>
+    개당 <b>${NUM(sp.R.price)}</b> 코인 · 총 <b>${NUM(total)}</b> 코인<br>보유 코인 ${NUM(G.coins)}`;
+}
+
+/* ── dex ───────────────────────────────────────────────── */
+let dexF=0;
+function drawDex(){
+  const list=SPECIES.filter(s=>!dexF||s.rar===dexF);
+  $('#dexGrid').innerHTML=list.map(s=>{
+    const got=G.dex.includes(s.id);
+    return `<div class="dex${got?'':' lock'}">${flowerSVG(s,84)}
+      <div class="nm">${got?s.ko:'???'}</div>
+      <div class="no">No.${String(s.no).padStart(3,'0')} · ${s.R.ko}</div></div>`;
+  }).join('');
+  $('#dexBar').firstElementChild.style.width=(G.dex.length/SPECIES.length*100)+'%';
+}
+function buildDexFilters(){
+  const opts=[[0,'전체']].concat([1,2,3,4,5].map(r=>[r,RARITY[r].ko]));
+  $('#dexFilters').innerHTML=opts.map(([v,t])=>
+    `<button class="filt${v===dexF?' sel':''}" data-f="${v}">${t}</button>`).join('');
+}
+
+/* ── reveal card ───────────────────────────────────────── */
+function flushCards(){
+  if(cardBusy||!cardQ.length) return;
+  cardBusy=true;
+  const sp=cardQ.shift();
+  $('#cardArt').innerHTML=flowerInner(sp);
+  $('#cardKo').textContent=sp.ko;
+  $('#cardLa').textContent=sp.la;
+  $('#cardMean').innerHTML=`${rrChip(sp)} &nbsp;꽃말 · <b>${sp.mean}</b>`;
+  $('#cardOv').classList.add('on');
+}
+function closeCard(){ $('#cardOv').classList.remove('on'); cardBusy=false; setTimeout(flushCards,360); }
+
+/* ── dialogue ──────────────────────────────────────────── */
+function say(lines){
+  return new Promise(res=>{
+    const d=$('#dlg'), t=$('#dlgText'); let i=0;
+    d.classList.add('on'); t.textContent=lines[0];
+    const h=()=>{ i++; if(i>=lines.length){d.removeEventListener('pointerdown',h);d.classList.remove('on');setTimeout(res,240);} else t.textContent=lines[i]; };
+    d.addEventListener('pointerdown',h);
+  });
+}
+
+/* ── guided flow ───────────────────────────────────────── */
+const TUT={i:-1,n:0,list:[
+  {say:['안녕하세요, 저는 하린이에요.','여기가 우리 꽃밭이에요. 밭을 일구고 꽃을 키워요.','씨앗은 세 종류로 시작해요. 나머지는 상점에서 사면 돼요.']},
+  {tool:'seed', ring:'#toolSeed', tag:'아래에서 “씨앗”을 골라요'},
+  {sheet:true, tag:'심을 씨앗을 하나 골라요'},
+  {need:'plant', n:3, tool:'seed', tag:'밭 위를 손가락으로 쓸어보세요 — 지나간 칸마다 씨가 뿌려져요'},
+  {tool:'water', ring:'#toolWater', tag:'이제 “물주기”를 골라요'},
+  {need:'water', n:3, tool:'water', tag:'드래그 한 번으로 여러 밭에 동시에 물을 줘요'},
+  {say:['물을 줄 때마다 한 단계씩 자라요.','씨앗 → 새싹 → 잎 → 꽃봉오리 → 활짝.','귀한 꽃일수록 물을 더 자주 줘야 해요.']},
+  {need:'bloom', n:1, tag:'꽃이 필 때까지 물을 더 주세요'},
+  {tool:'cut', ring:'#toolCut', tag:'“수확”을 골라요'},
+  {need:'harvest', n:1, tool:'cut', tag:'바닥이 아니라 “핀 꽃” 위를 쓸어야 수확돼요'},
+  {say:['수확하면 코인과 경험치가 쌓여요.','코인으로 상점에서 새 씨앗을 사고,','레벨이 오르면 밭이 넓어져요 — 10레벨부터는 바깥 땅도 살 수 있고요.','밭이 화면에 다 안 들어오면 잔디를 드래그해 옮기세요.']},
+  {free:true}
+]};
+function tutNext(){
+  TUT.i++; TUT.n=0; ringOff(); tag('');
+  const s=TUT.list[TUT.i];
+  if(!s) return;
+  if(s.say){ say(s.say).then(()=>{ if(TUT.i===0){$('#panel').classList.add('on'); setTool('hand');} tutNext(); }); return; }
+  if(s.sheet){ tag(s.tag); openSeeds(); return; }
+  if(s.ring){ tag(s.tag); setTimeout(()=>ringOn(s.ring),60); return; }
+  if(s.need){ tag(s.tag); if(s.tool) setTool(s.tool); return; }
+  if(s.free){ tag(''); setTool('water'); toast('자유롭게 밭을 가꿔보세요'); }
+}
+function tutHit(ev){
+  const s=TUT.list[TUT.i]; if(!s) return;
+  if(s.ring&&ev==='tool:'+s.tool){ tutNext(); return; }
+  if(s.need){
+    if(ev===s.need){ TUT.n++; if(TUT.n>=s.n) tutNext(); return; }
+    if(s.tool&&ev.startsWith('tool:')&&ev!=='tool:'+s.tool) tutNext();
+  }
+}
+
+/* ── art ───────────────────────────────────────────────── */
+const SKIN='#F4D6C0', SKIN2='#E5BCA3', HAIR='#4B3138', HAIR2='#6A464C';
+function girlArt(){return `
+<defs>
+ <linearGradient id="cardi" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FFFAF6"/><stop offset="100%" stop-color="#F5E5DA"/></linearGradient>
+ <linearGradient id="apron" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#F7BFCF"/><stop offset="100%" stop-color="#E79BB2"/></linearGradient>
+ <linearGradient id="hairg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="${HAIR2}"/><stop offset="70%" stop-color="${HAIR}"/></linearGradient>
+</defs>
+<ellipse cx="60" cy="184" rx="30" ry="6" fill="#4A5634" opacity=".2"/>
+<circle cx="60" cy="22" r="13" fill="url(#hairg)"/>
+<path d="M47 24 Q60 12 73 24" fill="none" stroke="${HAIR2}" stroke-width="1.4" opacity=".6"/>
+<path d="M42 78 Q60 70 78 78 L86 132 Q60 142 34 132 Z" fill="url(#cardi)" stroke="#EBD5C8" stroke-width="1"/>
+<path d="M34 130 Q60 142 86 130 L92 176 Q60 186 28 176 Z" fill="#DCC9BC"/>
+<path d="M34 130 Q60 142 86 130 L92 176 Q60 186 28 176 Z" fill="url(#apron)" opacity=".55"/>
+<path d="M46 92 Q60 86 74 92 L79 138 Q60 146 41 138 Z" fill="url(#apron)"/>
+<path d="M46 92 Q60 100 74 92" fill="none" stroke="#FFF" stroke-width="1.2" opacity=".5"/>
+<circle cx="60" cy="116" r="2.4" fill="#FFF" opacity=".65"/>
+<path d="M43 82 Q31 104 38 124" fill="none" stroke="url(#cardi)" stroke-width="11" stroke-linecap="round"/>
+<path d="M77 82 Q89 104 82 124" fill="none" stroke="url(#cardi)" stroke-width="11" stroke-linecap="round"/>
+<circle cx="38" cy="127" r="5" fill="${SKIN}"/><circle cx="82" cy="127" r="5" fill="${SKIN}"/>
+<path d="M54 66 h12 v10 h-12 z" fill="${SKIN2}"/>
+<ellipse cx="60" cy="46" rx="20.5" ry="22" fill="${SKIN}"/>
+<path d="M40 46 Q38 20 60 18 Q82 20 80 46 Q78 32 60 30 Q42 32 40 46 Z" fill="url(#hairg)"/>
+<path d="M40 44 Q36 62 39 74 Q45 60 42 44 Z" fill="url(#hairg)"/>
+<path d="M80 44 Q84 62 81 74 Q75 60 78 44 Z" fill="url(#hairg)"/>
+<ellipse cx="46.5" cy="52" rx="4.6" ry="3.2" fill="#F4A6B4" opacity=".55"/>
+<ellipse cx="73.5" cy="52" rx="4.6" ry="3.2" fill="#F4A6B4" opacity=".55"/>
+<path d="M50 47.5 q3.4 -3.4 6.8 0" fill="none" stroke="#3E2A30" stroke-width="2.1" stroke-linecap="round"/>
+<path d="M63.2 47.5 q3.4 -3.4 6.8 0" fill="none" stroke="#3E2A30" stroke-width="2.1" stroke-linecap="round"/>
+<path d="M56.6 57.5 q3.4 3 6.8 0" fill="none" stroke="#C4707E" stroke-width="1.7" stroke-linecap="round"/>
+<path d="M49 40 q4 -2.4 8 -.6" fill="none" stroke="${HAIR}" stroke-width="1.5" stroke-linecap="round"/>
+<path d="M63 39.4 q4 -1.8 8 .6" fill="none" stroke="${HAIR}" stroke-width="1.5" stroke-linecap="round"/>
+<g transform="translate(80 30) scale(.55)"><circle r="4" fill="#F6D98C"/>
+ <g fill="#F4A9BE">${[0,72,144,216,288].map(a=>`<ellipse cx="0" cy="-9" rx="4.4" ry="7" transform="rotate(${a})"/>`).join('')}</g></g>`;}
+function canArt(){return `
+<defs><linearGradient id="cg" x1="0" y1="0" x2="0" y2="1">
+ <stop offset="0%" stop-color="#DCEFF0"/><stop offset="55%" stop-color="#B8DDE0"/><stop offset="100%" stop-color="#8FC3C8"/></linearGradient></defs>
+<path d="M46 34 h44 a10 10 0 0 1 10 10 v30 a10 10 0 0 1 -10 10 h-44 a10 10 0 0 1 -10 -10 v-30 a10 10 0 0 1 10 -10 z" fill="url(#cg)"/>
+<path d="M52 38 h8 v46 h-8 z" fill="#FFF" opacity=".35"/>
+<path d="M46 46 L14 66 L18 74 L46 60 Z" fill="url(#cg)"/>
+<ellipse cx="16" cy="70" rx="6" ry="5" fill="#7FB4BA"/>
+<path d="M58 34 Q66 16 84 20 Q94 23 94 34" fill="none" stroke="#9BCBD0" stroke-width="5" stroke-linecap="round"/>
+<rect x="36" y="52" width="64" height="7" rx="3.5" fill="#F3AEC2" opacity=".9"/>
+<circle cx="68" cy="70" r="5" fill="#FFF" opacity=".45"/>`;}
+function titleArt(){
+  const pick=['peony','cosmos','rose','babysbreath'].map(id=>byId(id));
+  const pos=[[68,100,.62,-14],[164,102,.58,13],[116,86,.80,0],[116,140,.40,0]];
+  let defs='',body='';
+  pick.forEach((sp,i)=>{const h=buildHead(sp,1);defs+=h.defs;
+    body+=`<g transform="translate(${pos[i][0]} ${pos[i][1]}) scale(${pos[i][2]*(sp.head.scale||1)}) rotate(${pos[i][3]})">${h.body}</g>`;});
+  return `<defs>${defs}</defs>
+   <ellipse cx="115" cy="176" rx="72" ry="8" fill="#C79683" opacity=".22"/>
+   <path d="M115 172 C96 150 88 126 92 108" fill="none" stroke="#7FA87E" stroke-width="4" stroke-linecap="round"/>
+   <path d="M115 172 C134 150 142 126 138 108" fill="none" stroke="#7FA87E" stroke-width="4" stroke-linecap="round"/>
+   <path d="M115 172 L115 120" stroke="#6E9A6B" stroke-width="4.5" stroke-linecap="round"/>
+   ${body}`;
+}
+
+/* ── boot ──────────────────────────────────────────────── */
+function boot(){
+  $('#girl').innerHTML=girlArt();
+  $('#faceSvg').innerHTML=girlArt();
+  $('#can').innerHTML=canArt();
+  $('#titleArt').innerHTML=titleArt();
+
+  const t=$('#title');
+  for(let i=0;i<9;i++){
+    const s=document.createElementNS('http://www.w3.org/2000/svg','svg');
+    s.setAttribute('viewBox','0 0 12 16'); s.classList.add('petalFall');
+    s.innerHTML='<ellipse cx="6" cy="8" rx="5" ry="7.4" fill="#F6C3CE"/>';
+    const dur=7+Math.random()*6;
+    s.style.cssText=`left:${Math.random()*100}%;width:${8+Math.random()*7}px;animation:fall ${dur}s linear ${-Math.random()*dur}s infinite`;
+    t.appendChild(s);
+  }
+  const st=document.createElement('style');
+  st.textContent='@keyframes fall{0%{transform:translateY(-20px) rotate(0)}100%{transform:translateY(105vh) rotate(420deg)}}';
+  document.head.appendChild(st);
+
+  /* three starter seeds, lowest rarity only */
+  ['tulip','daisy','cosmos'].forEach(id=>{G.inv[id]=24;});
+  rotateSpecial();
+  buildDecor(); buildDexFilters();
+  sizeCanvas(); centerCam();
+  setSeed(byId('tulip'));
+  hud();
+  requestAnimationFrame(frame);
+
+  addEventListener('resize',()=>{sizeCanvas();clampCam();});
+  cv.addEventListener('pointerdown',onDown);
+  cv.addEventListener('pointermove',onMove);
+  addEventListener('pointerup',onUp);
+  addEventListener('pointercancel',onUp);
+
+  $$('.tool').forEach(b=>b.onclick=()=>setTool(b.dataset.t));
+  $('#seedSlot').onclick=()=>openSeeds();
+  $('#btnAll').onclick=batchPlant;
+  $('#btnRain').onclick=batchWater;
+  $('#zIn').onclick=()=>{G.z=clamp(G.z+.18,.5,1.4);clampCam();};
+  $('#zOut').onclick=()=>{G.z=clamp(G.z-.18,.5,1.4);clampCam();};
+
+  $('#dexBtn').onclick=()=>{drawDex();$('#dexScreen').classList.add('on');};
+  $('#dexClose').onclick=()=>$('#dexScreen').classList.remove('on');
+  $('#dexFilters').addEventListener('click',e=>{
+    const b=e.target.closest('.filt'); if(!b) return;
+    dexF=+b.dataset.f; buildDexFilters(); drawDex();
+  });
+  $('#shopBtn').onclick=()=>{drawShop();$('#shopScreen').classList.add('on');};
+  $('#shopClose').onclick=()=>$('#shopScreen').classList.remove('on');
+  $('#shopScreen').addEventListener('click',e=>{
+    const b=e.target.closest('.item'); if(b) askBuy(b.dataset.id);
+  });
+  $('#seedShop').onclick=()=>{closeSeeds();drawShop();$('#shopScreen').classList.add('on');};
+
+  $('#cardOk').onclick=closeCard;
+  $('#cfNo').onclick=()=>{$('#confirmOv').classList.remove('on');cfYes=null;buyState=null;};
+  $('#cfYes').onclick=()=>{$('#confirmOv').classList.remove('on');const f=cfYes;cfYes=null;if(f)f();buyState=null;};
+  $('#confirmOv').addEventListener('click',e=>{
+    const b=e.target.closest('.qtyBtn'); if(!b||!buyState) return;
+    buyState.qty=clamp(buyState.qty+ +b.dataset.d,QTY_MIN,QTY_MAX);
+    renderBuyDialog();
+  });
+
+  $('#seedList').addEventListener('pointerdown',e=>{
+    const b=e.target.closest('.seed'); if(!b) return;
+    $$('#seedList .seed').forEach(x=>x.classList.remove('sel')); b.classList.add('sel');
+    seedPick=byId(b.dataset.id);
+  });
+  $('#seedGo').onclick=()=>{
+    if(seedPick) setSeed(seedPick);
+    closeSeeds();
+    const s=TUT.list[TUT.i];
+    if(s&&s.sheet) setTimeout(tutNext,340);
+  };
+
+  $('#startBtn').onclick=()=>{
+    $('#title').classList.add('out');
+    setTimeout(()=>{ $('#title').classList.add('hide'); sizeCanvas(); centerCam(); G.started=true; tutNext(); },700);
+  };
+}
+boot();
+</script>
+
+</body>
+</html>
