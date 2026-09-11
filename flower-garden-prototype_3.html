@@ -1227,16 +1227,23 @@ const tileY=(r,c)=>(c+r)*HH;
 const pickTile=(wx,wy)=>{const u=wx/HW,v=wy/HH;return {c:Math.round((u+v)/2),r:Math.round((v-u)/2)};};
 
 /* ── land ──────────────────────────────────────────────── */
-const MAIN=8, EXPAND_LV=10, BN=4, BLOCK_PRICE=1500;
+const MAIN=8, EXPAND_LV=10, BN=4, BLOCK_PRICE=1500, HV_NEED=15;
+/* 한 칸씩 띄운 바깥 땅 10곳 — 위에서부터 차례로 하나씩 열린다 */
 const BLOCKS=[
-  {id:'N',ko:'북쪽 밭',r0:-5,c0:2},
-  {id:'W',ko:'서쪽 밭',r0:2,c0:-5},
-  {id:'E',ko:'동쪽 밭',r0:2,c0:9},
-  {id:'S',ko:'남쪽 밭',r0:9,c0:2}
+  {id:'N', ko:'북쪽 밭',   r0:-5, c0:2},
+  {id:'W', ko:'서쪽 밭',   r0:2,  c0:-5},
+  {id:'E', ko:'동쪽 밭',   r0:2,  c0:9},
+  {id:'S', ko:'남쪽 밭',   r0:9,  c0:2},
+  {id:'NW',ko:'북서쪽 밭', r0:-5, c0:-5},
+  {id:'SE',ko:'남동쪽 밭', r0:9,  c0:9},
+  {id:'NE',ko:'북동쪽 밭', r0:-5, c0:9},
+  {id:'SW',ko:'남서쪽 밭', r0:9,  c0:-5},
+  {id:'NN',ko:'먼 북쪽 밭',r0:-10,c0:2},
+  {id:'SS',ko:'먼 남쪽 밭',r0:14, c0:2}
 ];
 const PLOTS=[], PMAP=new Map();
 function addPlot(r,c,blk){
-  const p={r,c,blk,sp:null,stage:0,wc:0,wet:0,pop:0,born:0};
+  const p={r,c,blk,sp:null,stage:0,wc:0,wet:0,pop:0,born:0,hv:0};
   PLOTS.push(p); PMAP.set(r+','+c,p);
 }
 for(let r=0;r<MAIN;r++) for(let c=0;c<MAIN;c++) addPlot(r,c,null);
@@ -1255,10 +1262,25 @@ const G={
 };
 const size=()=>SIZE[Math.min(G.lv,SIZE.length-1)];
 const own=p=> p.blk ? G.bought.has(p.blk) : (p.r<size()&&p.c<size());
-const preview=p=> p.blk ? (G.lv>=EXPAND_LV&&!G.bought.has(p.blk))
+const nextBlock=()=>BLOCKS.find(b=>!G.bought.has(b.id))||null;
+const preview=p=> p.blk ? (G.lv>=EXPAND_LV&&p.blk===(nextBlock()||{}).id)
                         : (p.r<=size()&&p.c<=size()&&p.r<MAIN&&p.c<MAIN);
 const eachOwn=fn=>{for(const p of PLOTS) if(own(p)) fn(p);};
 const seedsOwned=()=>SPECIES.filter(s=>(G.inv[s.id]|0)>0);
+
+/* 가진 밭을 모두 HV_NEED번씩 수확해야 다음 바깥 땅이 열린다 */
+function expandProgress(){
+  let n=0,t=0;
+  for(const p of PLOTS) if(own(p)){ t++; if(p.hv>=HV_NEED) n++; }
+  return {n,t};
+}
+let _expandOK=false;
+function refreshExpand(quiet){
+  const s=expandProgress(), ok=s.t>0&&s.n>=s.t, nb=nextBlock();
+  if(ok&&!_expandOK&&!quiet&&G.lv>=EXPAND_LV&&nb) toast(`밭을 모두 ${HV_NEED}번씩 수확했어요 — ${nb.ko}을 살 수 있어요`);
+  _expandOK=ok;
+  return ok;
+}
 
 /* ── canvas / camera ───────────────────────────────────── */
 const cv=$('#world'), ctx=cv.getContext('2d');
@@ -1537,11 +1559,11 @@ function drawPlot(g,p){
   const x=tileX(p.r,p.c), y=tileY(p.r,p.c);
   if(!own(p)){
     if(!preview(p)) return;
-    const buy=!!p.blk;
-    g.save(); g.setLineDash([5,8]);
+    const buy=!!p.blk, dim=(buy&&!_expandOK)?.42:1;
+    g.save(); g.setLineDash([5,8]); g.globalAlpha=dim;
     g.strokeStyle=buy?'rgba(255,236,180,.72)':'rgba(255,255,255,.34)'; g.lineWidth=buy?2:1.5;
     diamond(g,x,y,HW-7,HH-6); g.stroke();
-    g.setLineDash([]); g.globalAlpha=buy?.85:.5;
+    g.setLineDash([]); g.globalAlpha=(buy?.85:.5)*dim;
     g.strokeStyle=buy?'rgba(255,240,190,.95)':'rgba(255,255,255,.9)'; g.lineWidth=2;
     g.beginPath(); g.moveTo(x-6,y); g.lineTo(x+6,y); g.moveTo(x,y-5); g.lineTo(x,y+5); g.stroke();
     g.restore();
@@ -1744,8 +1766,8 @@ function doHarvest(p){
   if(!G.dex.includes(sp.id)){ G.dex.push(sp.id); cardQ.push(sp); }
   G.coins+=R.coin; G.xp+=R.xp;
   if(Math.random()<.5) G.inv[sp.id]=(G.inv[sp.id]|0)+1;
-  p.sp=null; p.stage=0; p.wc=0; p.wet=0;
-  hud(); checkLevel(); tutHit('harvest'); flushCards();
+  p.sp=null; p.stage=0; p.wc=0; p.wet=0; p.hv++;
+  hud(); refreshExpand(); checkLevel(); tutHit('harvest'); flushCards();
   return true;
 }
 function batchPlant(){
@@ -1774,23 +1796,35 @@ function checkLevel(){
       toast(`레벨 ${G.lv} — 밭이 ${after*after}칸으로 넓어졌어요!`);
       camTo(0,(after-1)*HH-52,900);
     }else if(G.lv===EXPAND_LV){
-      toast('레벨 10 — 밭 바깥의 빈 땅을 살 수 있어요');
+      toast(`레벨 10 — 밭을 ${HV_NEED}번씩 수확하면 바깥 땅을 살 수 있어요`);
     }else toast(`레벨 ${G.lv}`);
   }
+  refreshExpand(true);
 }
 
 /* ── expansion purchase ────────────────────────────────── */
 function askExpand(blkId){
   const b=BLOCKS.find(x=>x.id===blkId);
   if(G.lv<EXPAND_LV){ warn('아직 살 수 없어요',`레벨 ${EXPAND_LV}부터 밭을 넓힐 수 있어요`); return; }
+  const nb=nextBlock();
+  if(!nb){ warn('더 넓힐 땅이 없어요',`바깥 땅 ${BLOCKS.length}곳을 모두 일궜어요`); return; }
+  if(nb.id!==blkId){ warn('아직 살 수 없어요',`${nb.ko}부터 차례로 넓혀요`); return; }
+  const s=expandProgress();
+  if(s.n<s.t){
+    warn('땅을 더 가꿔야 해요',`가진 밭을 ${HV_NEED}번씩 수확하면 열려요 · ${NUM(s.n)}/${NUM(s.t)}칸`);
+    return;
+  }
   confirmAsk(b.ko+' 사기',
-    `한 칸 띄운 바깥 땅 <b>${BN*BN}칸</b>을 새로 일굽니다.<br>비용 <b>${NUM(BLOCK_PRICE)} 코인</b> · 보유 ${NUM(G.coins)} 코인`,
+    `한 칸 띄운 바깥 땅 <b>${BN*BN}칸</b>을 새로 일굽니다.<br>비용 <b>${NUM(BLOCK_PRICE)} 코인</b> · 보유 ${NUM(G.coins)} 코인<br>바깥 땅 <b>${G.bought.size+1}/${BLOCKS.length}곳</b>`,
     ()=>{
       if(G.coins<BLOCK_PRICE){ warn('코인이 부족해요','꽃을 더 수확해 보세요'); return; }
+      const cur=nextBlock();
+      if(!cur||cur.id!==blkId||!_expandOK) return;
       G.coins-=BLOCK_PRICE; G.bought.add(blkId);
       PLOTS.forEach(p=>{ if(p.blk===blkId) p.born=1; });
       const cx=tileX(b.r0+1.5,b.c0+1.5), cy=tileY(b.r0+1.5,b.c0+1.5);
       camTo(cx,cy-40,800);
+      refreshExpand(true);
       hud(); toast(`${b.ko} ${BN*BN}칸을 일궜어요`);
     });
 }
@@ -1981,7 +2015,7 @@ const TUT={i:-1,n:0,list:[
   {need:'bloom', n:1, tag:'꽃이 필 때까지 물을 더 주세요'},
   {tool:'cut', ring:'#toolCut', tag:'“수확”을 골라요'},
   {need:'harvest', n:1, tool:'cut', tag:'바닥이 아니라 “핀 꽃” 위를 쓸어야 수확돼요'},
-  {say:['수확하면 코인과 경험치가 쌓여요.','코인으로 상점에서 새 씨앗을 사고,','레벨이 오르면 밭이 넓어져요 — 10레벨부터는 바깥 땅도 살 수 있고요.','밭이 화면에 다 안 들어오면 잔디를 드래그해 옮기세요.']},
+  {say:['수확하면 코인과 경험치가 쌓여요.','코인으로 상점에서 새 씨앗을 사고,',`레벨이 오르면 밭이 넓어져요 — 10레벨부터는 가진 밭을 ${HV_NEED}번씩 수확할 때마다 바깥 땅을 한 곳씩 살 수 있어요.`,'밭이 화면에 다 안 들어오면 잔디를 드래그해 옮기세요.']},
   {free:true}
 ]};
 function tutNext(){
