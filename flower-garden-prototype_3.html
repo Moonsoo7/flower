@@ -80,7 +80,7 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
   font-style:normal;font-size:9.5px;font-weight:700;padding:1px 5px;font-variant-numeric:tabular-nums;
   box-shadow:0 1px 4px rgba(140,60,80,.35)}
 .zbtn:active{transform:scale(.94)}
-#zoomBox .zbtn:nth-child(3){margin-top:10px}
+#zoomBox .zbtn:nth-child(4){margin-top:10px}
 
 #stepTag{position:absolute;top:60px;left:50%;transform:translateX(-50%);z-index:9;
   background:var(--plum);color:#FFF3EC;border-radius:999px;padding:7px 15px;font-size:12px;
@@ -216,7 +216,7 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 #cardLa{font-size:11px;font-style:italic;color:var(--plum3);letter-spacing:.04em;margin-top:2px}
 #cardMean{font-size:13px;color:var(--rose2);margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
 
-#confirmOv{z-index:25}
+#confirmOv{z-index:31}   /* 시작 화면(30)보다 위 — 초기화 확인창이 가려지지 않게 */
 #confirm{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) scale(.9);width:280px;
   background:var(--white);border-radius:24px;padding:22px 20px 18px;text-align:center;
   box-shadow:0 22px 50px rgba(110,60,75,.3);opacity:0;transition:.3s cubic-bezier(.2,.9,.3,1)}
@@ -252,6 +252,7 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 #title h1{font-family:var(--fdisp);font-weight:700;font-size:37px;color:var(--rose3);margin:0;
   text-shadow:0 2px 0 rgba(255,255,255,.8)}
 #title .sub{font-size:12px;letter-spacing:.3em;color:var(--plum2);margin:8px 0 28px}
+#titleBtns{display:flex;flex-direction:column;align-items:center;gap:10px}
 #title .ver{position:absolute;bottom:22px;font-size:10.5px;color:var(--plum3);letter-spacing:.06em;text-align:center;line-height:1.6}
 .petalFall{position:absolute;top:-20px;pointer-events:none;opacity:.7}
 
@@ -275,6 +276,7 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
   </div>
 
   <div id="zoomBox">
+    <button class="zbtn big" id="homeBtn" aria-label="처음 화면">🏠</button>
     <button class="zbtn big" id="shopBtn">🛒</button>
     <button class="zbtn big" id="dexBtn">🌼<i id="dexN">0</i></button>
     <button class="zbtn" id="zIn">＋</button>
@@ -351,8 +353,11 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
     <svg id="titleArt" viewBox="0 0 230 190" aria-hidden="true"></svg>
     <h1>꽃이 피는 자리</h1>
     <div class="sub">A QUIET GARDEN</div>
-    <button class="btn" id="startBtn">밭으로 나가기</button>
-    <div class="ver">프로토타입 v0.3 · 꽃 100종 · 씨앗 상점<br>세로형 모바일 웹</div>
+    <div id="titleBtns">
+      <button class="btn" id="startBtn">밭으로 나가기</button>
+      <button class="btn ghost hide" id="resetBtn">처음부터 다시</button>
+    </div>
+    <div class="ver">프로토타입 v0.3 · 꽃 100종 · 씨앗 상점<br>세로형 모바일 웹 · 자동 저장</div>
   </div>
 </div>
 <script>
@@ -1282,6 +1287,52 @@ function refreshExpand(quiet){
   return ok;
 }
 
+/* ── 로컬 저장 ─────────────────────────────────────────── */
+const SAVE_KEY='flowerGarden.v1';
+let _hasSave=false, _dirty=false, _saveT=0, _wiped=false;
+const markDirty=()=>{_dirty=true;};
+const canResume=()=> _hasSave||TUT.i>=0;
+function snapshot(){
+  const plots=[];
+  for(const p of PLOTS) if(p.sp||p.hv) plots.push([p.r,p.c,p.sp?p.sp.id:'',p.stage,p.wc,p.hv]);
+  return {v:1, lv:G.lv, xp:G.xp, coins:G.coins, water:G.water, dex:G.dex, inv:G.inv,
+    bought:[...G.bought], seed:G.seed?G.seed.id:null, tool:G.tool, z:G.z,
+    cam:{x:G.cam.x,y:G.cam.y}, special:G.special, rotAt:G.rotAt, tut:TUT.i, plots};
+}
+function saveNow(){
+  /* _wiped: 초기화 후 pagehide/주기 저장이 지운 데이터를 되살리지 못하게 막는다 */
+  if(_wiped||TUT.i<0) return;               /* 밭에 나가기 전에는 저장하지 않는다 */
+  try{ localStorage.setItem(SAVE_KEY,JSON.stringify(snapshot())); _hasSave=true; }catch(_){}
+  _dirty=false; _saveT=0;
+}
+function loadSave(){
+  try{
+    const raw=localStorage.getItem(SAVE_KEY); if(!raw) return null;
+    const d=JSON.parse(raw); if(!d||d.v!==1) return null;
+    _hasSave=true; return d;
+  }catch(_){ return null; }
+}
+function refreshTitle(){
+  const r=canResume();
+  $('#startBtn').textContent=r?'이어서 하기':'밭으로 나가기';
+  $('#resetBtn').classList.toggle('hide',!r);
+}
+function applySave(d){
+  G.lv=d.lv||1; G.xp=d.xp||0; G.coins=d.coins||0;
+  G.water=d.water===undefined?WMAX:d.water;
+  G.dex=Array.isArray(d.dex)?d.dex.filter(byId):[];
+  G.inv=(d.inv&&typeof d.inv==='object')?d.inv:{};
+  G.bought=new Set((d.bought||[]).filter(id=>BLOCKS.some(b=>b.id===id)));
+  G.seed=byId(d.seed)||null; G.tool=d.tool||'water'; G.z=clamp(d.z||1,.5,1.4);
+  if(d.cam){ G.cam.x=d.cam.x||0; G.cam.y=d.cam.y||0; }
+  G.special=(d.special||[]).filter(byId); G.rotAt=d.rotAt||0;
+  (d.plots||[]).forEach(a=>{
+    const p=PMAP.get(a[0]+','+a[1]); if(!p) return;
+    p.sp=byId(a[2])||null; p.stage=p.sp?(a[3]||0):0; p.wc=a[4]||0; p.hv=a[5]||0;
+  });
+  TUT.i=d.tut===undefined?-1:d.tut;
+}
+
 /* ── canvas / camera ───────────────────────────────────── */
 const cv=$('#world'), ctx=cv.getContext('2d');
 let VW=0,VH=0,DPR=1;
@@ -1518,6 +1569,7 @@ let last=performance.now();
 function frame(now){
   const dt=Math.min((now-last)/1000,.05); last=now;
   regen(dt); stepCam(dt); rotTick();
+  if(_dirty){ _saveT+=dt; if(_saveT>=1.2) saveNow(); }
 
   ctx.setTransform(DPR,0,0,DPR,0,0);
   const bg=ctx.createLinearGradient(0,0,0,VH);
@@ -1839,7 +1891,7 @@ function hud(){
   const need=XPNEED[Math.min(G.lv,XPNEED.length-1)];
   $('#xpBar').firstElementChild.style.width=Math.min(100,G.xp/need*100)+'%';
   if(G.seed) $('#seedLa').textContent='보유 '+NUM(G.inv[G.seed.id]|0)+'개';
-  hudWater();
+  hudWater(); markDirty();
 }
 function hudWater(){
   const r=G.water/WMAX;
@@ -2115,13 +2167,15 @@ function boot(){
   st.textContent='@keyframes fall{0%{transform:translateY(-20px) rotate(0)}100%{transform:translateY(105vh) rotate(420deg)}}';
   document.head.appendChild(st);
 
-  /* three starter seeds, lowest rarity only */
-  ['tulip','daisy','cosmos'].forEach(id=>{G.inv[id]=24;});
-  rotateSpecial();
+  const saved=loadSave();
+  if(saved) applySave(saved);
+  else ['tulip','daisy','cosmos'].forEach(id=>{G.inv[id]=24;});  /* 첫 시작 씨앗 3종 */
+  if(!G.special.length||!G.rotAt) rotateSpecial();
   buildDecor(); buildDexFilters();
-  sizeCanvas(); centerCam();
-  setSeed(byId('tulip'));
-  hud();
+  sizeCanvas();
+  if(saved) clampCam(); else centerCam();
+  setSeed(G.seed||byId('tulip'));
+  refreshExpand(true); hud(); refreshTitle();
   requestAnimationFrame(frame);
 
   addEventListener('resize',()=>{sizeCanvas();clampCam();});
@@ -2172,9 +2226,38 @@ function boot(){
   };
 
   $('#startBtn').onclick=()=>{
+    const fresh=TUT.i<0;
     $('#title').classList.add('out');
-    setTimeout(()=>{ $('#title').classList.add('hide'); sizeCanvas(); centerCam(); G.started=true; tutNext(); },700);
+    setTimeout(()=>{
+      $('#title').classList.add('hide');
+      sizeCanvas(); G.started=true;
+      if(fresh){ centerCam(); tutNext(); }
+      else{
+        $('#panel').classList.add('on'); clampCam();
+        if(TUT.i>=TUT.list.length-1){ setTool(G.tool); tag(''); }
+        else { TUT.i--; tutNext(); }                  /* 튜토리얼 중이면 그 단계부터 다시 */
+      }
+      saveNow();
+    },700);
   };
+  $('#homeBtn').onclick=()=>{
+    saveNow();
+    G.started=false; drag=null; painted=null; HOVER=null; hideCan();
+    refreshTitle();
+    const t=$('#title'); t.classList.remove('hide');
+    requestAnimationFrame(()=>t.classList.remove('out'));
+  };
+  $('#resetBtn').onclick=()=>{
+    confirmAsk('처음부터 다시 시작할까요?',
+      '저장된 밭과 꽃, 코인, 도감이 모두 지워지고 첫 화면부터 다시 시작해요.',
+      ()=>{
+        _wiped=true; _hasSave=false; _dirty=false;
+        try{ localStorage.removeItem(SAVE_KEY); }catch(_){}
+        refreshTitle(); location.reload();
+      });
+  };
+  addEventListener('visibilitychange',()=>{ if(document.hidden) saveNow(); });
+  addEventListener('pagehide',()=>saveNow());
 }
 boot();
 </script>
