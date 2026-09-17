@@ -120,10 +120,11 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
   font-size:11px;color:var(--rose2);line-height:1.25;text-align:center;box-shadow:var(--sh1);flex:none}
 .mini:active{transform:scale(.96)}
 .mini b{display:block;font-size:13.5px}
-#tools{display:flex;gap:6px}
-.tool{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 2px 8px;
-  border-radius:16px;font-size:11px;color:var(--plum2);border:1.5px solid transparent;transition:.16s}
-.tool svg{width:24px;height:24px;display:block}
+#tools{display:flex;gap:4px}
+.tool{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 1px 8px;
+  border-radius:16px;font-size:10.5px;color:var(--plum2);border:1.5px solid transparent;transition:.16s;
+  white-space:nowrap}
+.tool svg{width:22px;height:22px;display:block}
 .tool.sel{background:var(--blush3);border-color:var(--blush);color:var(--rose2);font-weight:700}
 .tool:active{transform:scale(.96)}
 
@@ -231,18 +232,26 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 .qtyBtn:active{transform:scale(.94)}
 .qtyBtn:disabled{opacity:.35}
 .qtyNum{font-size:18px;font-weight:700;color:var(--ink);min-width:2.4em;font-variant-numeric:tabular-nums}
+.qtyMax{border:1px solid var(--blush);background:var(--blush3);color:var(--rose2);
+  border-radius:11px;padding:6px 9px;font-size:11.5px;font-weight:700}
+.qtyMax:disabled{opacity:.35}
+.qtyRow{gap:11px}
 
+/* 하단 도구 패널 위에 떠서, 다른 흰 창들과 구분되도록 조금 더 어둡게 */
 #dlg{position:absolute;left:12px;right:12px;bottom:12px;z-index:14;
-  background:var(--white);border:1px solid var(--line);border-radius:24px;padding:16px 18px 16px 76px;
-  box-shadow:var(--sh2);transform:translateY(18px);opacity:0;pointer-events:none;transition:.32s cubic-bezier(.2,.9,.3,1)}
+  background:linear-gradient(180deg,#F2E0D3,#E6CEBE);border:1px solid #D8BBA8;
+  border-radius:24px;padding:15px 16px 13px 74px;
+  box-shadow:0 14px 34px rgba(104,62,74,.30);transform:translateY(18px);opacity:0;pointer-events:none;
+  transition:.32s cubic-bezier(.2,.9,.3,1)}
 #dlg.on{transform:none;opacity:1;pointer-events:auto}
-#dlgFace{position:absolute;left:14px;top:-16px;width:52px;height:66px;overflow:hidden;border-radius:26px 26px 22px 22px;
-  background:linear-gradient(180deg,#FFE9EE,#FBDDE3);border:1px solid var(--line)}
+#dlgFace{position:absolute;left:13px;top:-16px;width:52px;height:66px;overflow:hidden;border-radius:26px 26px 22px 22px;
+  background:linear-gradient(180deg,#FFF1E9,#F7DFD2);border:1px solid #D8BBA8}
 #dlgFace svg{width:104px;margin-left:-26px;margin-top:-4px}
-#dlgName{font-family:var(--fdisp);font-weight:700;font-size:13px;color:var(--rose2);margin-bottom:4px}
-#dlgText{font-size:14.5px;line-height:1.62;color:var(--ink);min-height:2.9em;word-break:keep-all}
-#dlgNext{position:absolute;right:16px;bottom:11px;font-size:11px;color:var(--plum3);animation:blink 1.4s infinite}
-@keyframes blink{0%,100%{opacity:.3}50%{opacity:1}}
+#dlgName{font-family:var(--fdisp);font-weight:700;font-size:13px;color:var(--rose3);margin-bottom:4px}
+#dlgText{font-size:14.5px;line-height:1.62;color:#3F2830;min-height:2.9em;word-break:keep-all}
+#dlgFoot{display:flex;align-items:center;gap:12px;margin-top:9px}
+#dlgStep{font-size:11.5px;color:#8A6A5C;font-variant-numeric:tabular-nums;margin-right:auto}
+#dlgOk{padding:9px 22px;font-size:13.5px}
 
 #title{position:absolute;inset:0;z-index:30;display:flex;flex-direction:column;align-items:center;
   justify-content:center;background:linear-gradient(180deg,#FFE9E1 0%,#FFF4EE 46%,#F8E4D8 100%);
@@ -301,6 +310,8 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
       <button class="tool" id="toolSeed" data-t="seed"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20c0-4 2-7 6-8-1 5-3 8-6 8Z"/><path d="M12 20c0-4-2-7-6-8 1 5 3 8 6 8Z"/><path d="M12 20v-3"/></svg>씨앗</button>
       <button class="tool" id="toolWater" data-t="water"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c4 5 6 7.6 6 10a6 6 0 0 1-12 0c0-2.4 2-5 6-10z"/><path d="M10 13.5a2.6 2.6 0 0 0 2 4"/></svg>물주기</button>
       <button class="tool" id="toolCut" data-t="cut"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="18" r="2.6"/><circle cx="18" cy="18" r="2.6"/><path d="M7.8 16.2 18 4M16.2 16.2 6 4"/></svg>수확</button>
+      <button class="tool" id="toolPath" data-t="path"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21 10 3M16 21 14 3"/><path d="M11.4 7h1.2M11 12h2M10.6 17h1.2"/></svg>길</button>
+      <button class="tool" id="toolFence" data-t="fence"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 20V8l2-2 2 2v12M14 20V8l2-2 2 2v12"/><path d="M4 11h16M4 15h16"/></svg>울타리</button>
     </div>
   </div>
 
@@ -346,7 +357,8 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 
   <div id="dlg">
     <div id="dlgFace"><svg viewBox="0 0 120 190" id="faceSvg"></svg></div>
-    <div id="dlgName">하린</div><div id="dlgText"></div><div id="dlgNext">탭</div>
+    <div id="dlgName">하린</div><div id="dlgText"></div>
+    <div id="dlgFoot"><span id="dlgStep"></span><button class="btn" id="dlgOk">확인</button></div>
   </div>
 
   <div id="title">
@@ -354,10 +366,10 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
     <h1>꽃이 피는 자리</h1>
     <div class="sub">A QUIET GARDEN</div>
     <div id="titleBtns">
-      <button class="btn" id="startBtn">밭으로 나가기</button>
+      <button class="btn" id="startBtn">밭으로 가기</button>
       <button class="btn ghost hide" id="resetBtn">처음부터 다시</button>
     </div>
-    <div class="ver">프로토타입 v0.3 · 꽃 100종 · 씨앗 상점<br>세로형 모바일 웹 · 자동 저장</div>
+    <div class="ver">프로토타입 v0.4 · 꽃 100종 · 씨앗 상점 · 길과 울타리<br>세로형 모바일 웹 · 자동 저장</div>
   </div>
 </div>
 <script>
@@ -1232,23 +1244,24 @@ const tileY=(r,c)=>(c+r)*HH;
 const pickTile=(wx,wy)=>{const u=wx/HW,v=wy/HH;return {c:Math.round((u+v)/2),r:Math.round((v-u)/2)};};
 
 /* ── land ──────────────────────────────────────────────── */
-const MAIN=8, EXPAND_LV=10, BN=4, BLOCK_PRICE=1500, HV_NEED=15;
-/* 한 칸씩 띄운 바깥 땅 10곳 — 위에서부터 차례로 하나씩 열린다 */
+const MAIN=8, EXPAND_LV=9, BN=4, BLOCK_PRICE=1500, HV_NEED=10;
+const GROW_S=5;                     /* 물을 준 뒤 자라는 데 걸리는 시간(초) */
+/* 기존 밭에 바로 이어 붙는 바깥 땅 10곳 — 가까운 곳부터 차례로 하나씩 열린다 */
 const BLOCKS=[
-  {id:'N', ko:'북쪽 밭',   r0:-5, c0:2},
-  {id:'W', ko:'서쪽 밭',   r0:2,  c0:-5},
-  {id:'E', ko:'동쪽 밭',   r0:2,  c0:9},
-  {id:'S', ko:'남쪽 밭',   r0:9,  c0:2},
-  {id:'NW',ko:'북서쪽 밭', r0:-5, c0:-5},
-  {id:'SE',ko:'남동쪽 밭', r0:9,  c0:9},
-  {id:'NE',ko:'북동쪽 밭', r0:-5, c0:9},
-  {id:'SW',ko:'남서쪽 밭', r0:9,  c0:-5},
-  {id:'NN',ko:'먼 북쪽 밭',r0:-10,c0:2},
-  {id:'SS',ko:'먼 남쪽 밭',r0:14, c0:2}
+  {id:'N', ko:'북쪽 밭',   r0:-4, c0:0},
+  {id:'S', ko:'남쪽 밭',   r0:8,  c0:4},
+  {id:'W', ko:'서쪽 밭',   r0:0,  c0:-4},
+  {id:'E', ko:'동쪽 밭',   r0:4,  c0:8},
+  {id:'N2',ko:'북쪽 둘째 밭', r0:-4, c0:4},
+  {id:'S2',ko:'남쪽 둘째 밭', r0:8,  c0:0},
+  {id:'W2',ko:'서쪽 둘째 밭', r0:4,  c0:-4},
+  {id:'E2',ko:'동쪽 둘째 밭', r0:0,  c0:8},
+  {id:'NW',ko:'북서쪽 밭', r0:-4, c0:-4},
+  {id:'SE',ko:'남동쪽 밭', r0:8,  c0:8}
 ];
 const PLOTS=[], PMAP=new Map();
 function addPlot(r,c,blk){
-  const p={r,c,blk,sp:null,stage:0,wc:0,wet:0,pop:0,born:0,hv:0};
+  const p={r,c,blk,sp:null,stage:0,wc:0,wet:0,pop:0,born:0,hv:0,cd:0,deco:null};
   PLOTS.push(p); PMAP.set(r+','+c,p);
 }
 for(let r=0;r<MAIN;r++) for(let c=0;c<MAIN;c++) addPlot(r,c,null);
@@ -1288,14 +1301,15 @@ function refreshExpand(quiet){
 }
 
 /* ── 로컬 저장 ─────────────────────────────────────────── */
-const SAVE_KEY='flowerGarden.v1';
+const SAVE_KEY='flowerGarden.v2';   /* v2: 밭 배치·길/울타리가 바뀌어 v1 기록은 쓰지 않는다 */
 let _hasSave=false, _dirty=false, _saveT=0, _wiped=false;
 const markDirty=()=>{_dirty=true;};
 const canResume=()=> _hasSave||TUT.i>=0;
 function snapshot(){
   const plots=[];
-  for(const p of PLOTS) if(p.sp||p.hv) plots.push([p.r,p.c,p.sp?p.sp.id:'',p.stage,p.wc,p.hv]);
-  return {v:1, lv:G.lv, xp:G.xp, coins:G.coins, water:G.water, dex:G.dex, inv:G.inv,
+  for(const p of PLOTS) if(p.sp||p.hv||p.deco)
+    plots.push([p.r,p.c,p.sp?p.sp.id:'',p.stage,p.wc,p.hv,p.cd,p.deco||'']);
+  return {v:2, lv:G.lv, xp:G.xp, coins:G.coins, water:G.water, dex:G.dex, inv:G.inv,
     bought:[...G.bought], seed:G.seed?G.seed.id:null, tool:G.tool, z:G.z,
     cam:{x:G.cam.x,y:G.cam.y}, special:G.special, rotAt:G.rotAt, tut:TUT.i, plots};
 }
@@ -1308,13 +1322,13 @@ function saveNow(){
 function loadSave(){
   try{
     const raw=localStorage.getItem(SAVE_KEY); if(!raw) return null;
-    const d=JSON.parse(raw); if(!d||d.v!==1) return null;
+    const d=JSON.parse(raw); if(!d||d.v!==2) return null;
     _hasSave=true; return d;
   }catch(_){ return null; }
 }
 function refreshTitle(){
   const r=canResume();
-  $('#startBtn').textContent=r?'이어서 하기':'밭으로 나가기';
+  $('#startBtn').textContent=r?'이어서 하기':'밭으로 가기';
   $('#resetBtn').classList.toggle('hide',!r);
 }
 function applySave(d){
@@ -1329,6 +1343,7 @@ function applySave(d){
   (d.plots||[]).forEach(a=>{
     const p=PMAP.get(a[0]+','+a[1]); if(!p) return;
     p.sp=byId(a[2])||null; p.stage=p.sp?(a[3]||0):0; p.wc=a[4]||0; p.hv=a[5]||0;
+    p.cd=p.sp?(a[6]||0):0; p.deco=(a[7]==='path'||a[7]==='fence')?a[7]:null;
   });
   TUT.i=d.tut===undefined?-1:d.tut;
 }
@@ -1597,6 +1612,7 @@ function frame(now){
     if(p.born>0) p.born=Math.max(0,p.born-dt/.45);
     if(p.pop>0)  p.pop=Math.max(0,p.pop-dt/.75);
     if(p.wet>0)  p.wet=Math.max(0,p.wet-dt/9);
+    growTick(p,dt);
     drawPlot(ctx,p);
   }
   stepParts(ctx,dt);
@@ -1607,6 +1623,38 @@ function frame(now){
   requestAnimationFrame(frame);
 }
 
+function rrect(g,x,y,w,h,r){
+  g.beginPath();
+  if(g.roundRect){ g.roundRect(x,y,w,h,r); return; }
+  const rr=Math.min(r,h/2,w/2);
+  g.moveTo(x+rr,y); g.arcTo(x+w,y,x+w,y+h,rr); g.arcTo(x+w,y+h,x,y+h,rr);
+  g.arcTo(x,y+h,x,y,rr); g.arcTo(x,y,x+w,y,rr); g.closePath();
+}
+function drawFence(g,x,y,BW){
+  const px=BW*.60, top=y-21;
+  g.save();
+  shadow(g,x,y+3,BW*.72,5,.14);
+  g.strokeStyle='#C39A6A'; g.lineWidth=3.2; g.lineCap='round';
+  g.beginPath(); g.moveTo(x-px,top+7); g.lineTo(x+px,top+7); g.stroke();
+  g.beginPath(); g.moveTo(x-px,top+15); g.lineTo(x+px,top+15); g.stroke();
+  g.strokeStyle='#A87C50'; g.lineWidth=4.2;
+  for(const s of [-1,1]){
+    g.beginPath(); g.moveTo(x+px*s,top); g.lineTo(x+px*s,y+1); g.stroke();
+  }
+  g.fillStyle='#8A6038';
+  for(const s of [-1,1]){ g.beginPath(); g.ellipse(x+px*s,top,2.6,1.7,0,0,6.2832); g.fill(); }
+  g.restore();
+}
+/* 물을 준 뒤 자라는 동안 차오르는 막대 */
+function drawGrowBar(g,p,x,y){
+  const prog=clamp(1-p.cd/GROW_S,0,1);
+  const w=34, h=5, by=y-(STEM_H[p.stage]||0)-24;
+  g.save();
+  g.fillStyle='rgba(58,44,40,.34)'; rrect(g,x-w/2-1.5,by-1.5,w+3,h+3,(h+3)/2); g.fill();
+  g.fillStyle='rgba(255,253,251,.80)'; rrect(g,x-w/2,by,w,h,h/2); g.fill();
+  g.fillStyle='#6FBFD6'; rrect(g,x-w/2,by,Math.max(h,w*prog),h,h/2); g.fill();
+  g.restore();
+}
 function drawPlot(g,p){
   const x=tileX(p.r,p.c), y=tileY(p.r,p.c);
   if(!own(p)){
@@ -1626,21 +1674,40 @@ function drawPlot(g,p){
   if(k!==1){ g.translate(x,y); g.scale(k,k); g.translate(-x,-y); }
 
   const BW=HW-5, BH=HH-4.1;
-  g.fillStyle='#71492F';
+  const deco=p.deco, hsh=p.r*7+p.c*13;
+  g.fillStyle=deco==='path'?'#A58D6C':'#71492F';
   g.beginPath(); g.moveTo(x-BW,y); g.lineTo(x,y+BH); g.lineTo(x,y+BH+BED); g.lineTo(x-BW,y+BED); g.closePath(); g.fill();
-  g.fillStyle='#5C3A24';
+  g.fillStyle=deco==='path'?'#8B7453':'#5C3A24';
   g.beginPath(); g.moveTo(x+BW,y); g.lineTo(x,y+BH); g.lineTo(x,y+BH+BED); g.lineTo(x+BW,y+BED); g.closePath(); g.fill();
 
-  const vv=((p.r*7+p.c*13)%5)*.018-.036;
-  const gr=g.createLinearGradient(x-BW,y-BH,x+BW,y+BH);
-  gr.addColorStop(0,tint('#CC996E',.10+vv)); gr.addColorStop(.48,tint('#AE7B53',.06+vv)); gr.addColorStop(1,tint('#8C5E38',vv>0?vv:0));
-  g.fillStyle=gr; diamond(g,x,y,BW,BH); g.fill();
+  const vv=(hsh%5)*.018-.036;
+  if(deco==='path'){                                   /* 걸어 다니는 길 */
+    const gr=g.createLinearGradient(x-BW,y-BH,x+BW,y+BH);
+    gr.addColorStop(0,tint('#E2D0AE',.06+vv)); gr.addColorStop(.5,tint('#D4BF99',vv>0?vv:0)); gr.addColorStop(1,'#C2AB82');
+    g.fillStyle=gr; diamond(g,x,y,BW,BH); g.fill();
+    g.fillStyle='rgba(122,100,72,.26)';
+    for(let i=0;i<4;i++){
+      const a=((hsh+i*37)%360)*RAD, d=.20+((hsh+i*53)%38)/100;
+      g.beginPath(); g.ellipse(x+Math.cos(a)*BW*d,y+Math.sin(a)*BH*d,2.5,1.6,0,0,6.2832); g.fill();
+    }
+    g.strokeStyle='rgba(255,248,232,.45)'; g.lineWidth=1.3; diamond(g,x,y,BW,BH); g.stroke();
+  }else if(deco==='fence'){                            /* 울타리가 선 잔디 */
+    const gr=g.createLinearGradient(x-BW,y-BH,x+BW,y+BH);
+    gr.addColorStop(0,tint('#9AC77F',.06+vv)); gr.addColorStop(.5,tint('#88B870',vv>0?vv:0)); gr.addColorStop(1,'#77A362');
+    g.fillStyle=gr; diamond(g,x,y,BW,BH); g.fill();
+    g.strokeStyle='rgba(255,255,255,.28)'; g.lineWidth=1.3; diamond(g,x,y,BW,BH); g.stroke();
+  }else{                                               /* 일군 밭 */
+    const gr=g.createLinearGradient(x-BW,y-BH,x+BW,y+BH);
+    gr.addColorStop(0,tint('#CC996E',.10+vv)); gr.addColorStop(.48,tint('#AE7B53',.06+vv)); gr.addColorStop(1,tint('#8C5E38',vv>0?vv:0));
+    g.fillStyle=gr; diamond(g,x,y,BW,BH); g.fill();
 
-  g.strokeStyle='rgba(88,56,34,.26)'; g.lineWidth=1.5;
-  for(const f of [.32,.55,.78]){
-    g.beginPath(); g.moveTo(x-BW+f*BW,y-f*BH); g.lineTo(x+f*BW,y+BH-f*BH); g.stroke();
+    g.strokeStyle='rgba(88,56,34,.26)'; g.lineWidth=1.5;
+    for(const f of [.32,.55,.78]){
+      g.beginPath(); g.moveTo(x-BW+f*BW,y-f*BH); g.lineTo(x+f*BW,y+BH-f*BH); g.stroke();
+    }
+    g.strokeStyle='rgba(255,236,208,.40)'; g.lineWidth=1.3; diamond(g,x,y,BW,BH); g.stroke();
   }
-  g.strokeStyle='rgba(255,236,208,.40)'; g.lineWidth=1.3; diamond(g,x,y,BW,BH); g.stroke();
+  if(deco==='fence') drawFence(g,x,y,BW);
 
   if(p.wet>0){
     g.save(); g.globalAlpha=Math.min(p.wet,1)*.34;
@@ -1663,6 +1730,7 @@ function drawPlot(g,p){
       g.drawImage(spr,-SPW/2,-SPBASE,SPW,SPH);
       g.restore();
     }
+    if(p.cd>0&&p.stage<4) drawGrowBar(g,p,x,y);
   }
   if(HOVER===p){
     g.strokeStyle='rgba(255,255,255,.92)'; g.lineWidth=2.4; diamond(g,x,y,BW,BH); g.stroke();
@@ -1783,31 +1851,48 @@ function applyTool(p){
   if(G.tool==='seed') doPlant(p);
   else if(G.tool==='water') doWater(p);
   else if(G.tool==='cut') doHarvest(p);
+  else if(G.tool==='path') doDeco(p,'path');
+  else if(G.tool==='fence') doDeco(p,'fence');
 }
 function doPlant(p,silent){
   if(p.sp||!G.seed) return false;
+  if(p.deco&&silent) return false;         /* 일괄심기는 길·울타리를 건드리지 않는다 */
   if((G.inv[G.seed.id]|0)<=0){
     if(!silent) warn('씨앗이 없어요','상점에서 씨앗을 더 구해오세요');
     return false;
   }
   G.inv[G.seed.id]--;
-  p.sp=G.seed; p.stage=0; p.wc=0; p.wet=0; p.pop=0; puff(p);
+  p.deco=null;                             /* 길·울타리 자리에 심으면 다시 밭이 된다 */
+  p.sp=G.seed; p.stage=0; p.wc=0; p.cd=0; p.wet=0; p.pop=0; p.born=1; puff(p);
   hud(); tutHit('plant'); return true;
+}
+function doDeco(p,kind){
+  if(p.sp) return false;                   /* 심어둔 꽃은 지키고 빈 칸만 바꾼다 */
+  if(p.deco===kind) return false;
+  p.deco=kind; p.born=1; puff(p);
+  hud(); return true;
 }
 function doWater(p,silent){
   if(!p.sp||p.stage>=4) return false;
+  if(p.cd>0) return false;                 /* 자라는 중 — 다 자라야 다음 물을 준다 */
   if(G.water<WCOST){
     if(!silent) warn('물이 부족해요','우물에서 조금씩 채워지는 중이에요');
     return false;
   }
-  G.water-=WCOST; p.wc++;
-  const need=p.sp.R.wpg;
-  splash(p);
-  if(p.wc>=need){
+  G.water-=WCOST; p.cd=GROW_S; splash(p);
+  hud(); tutHit('water'); return true;
+}
+/* 물을 준 뒤 GROW_S초 동안 자라고, 다 자라면 한 단계 올라간다 */
+function growTick(p,dt){
+  if(!p.sp||p.cd<=0) return;
+  p.cd=Math.max(0,p.cd-dt);
+  if(p.cd>0) return;
+  p.wc++;
+  if(p.wc>=p.sp.R.wpg){
     p.wc=0; p.stage++;
     if(p.stage===4){ p.pop=1; bloomFx(p); tutHit('bloom'); }
   }
-  hud(); tutHit('water'); return true;
+  markDirty();
 }
 let cardQ=[], cardBusy=false;
 function doHarvest(p){
@@ -1818,7 +1903,7 @@ function doHarvest(p){
   if(!G.dex.includes(sp.id)){ G.dex.push(sp.id); cardQ.push(sp); }
   G.coins+=R.coin; G.xp+=R.xp;
   if(Math.random()<.5) G.inv[sp.id]=(G.inv[sp.id]|0)+1;
-  p.sp=null; p.stage=0; p.wc=0; p.wet=0; p.hv++;
+  p.sp=null; p.stage=0; p.wc=0; p.cd=0; p.wet=0; p.hv++;
   hud(); refreshExpand(); checkLevel(); tutHit('harvest'); flushCards();
   return true;
 }
@@ -1848,7 +1933,7 @@ function checkLevel(){
       toast(`레벨 ${G.lv} — 밭이 ${after*after}칸으로 넓어졌어요!`);
       camTo(0,(after-1)*HH-52,900);
     }else if(G.lv===EXPAND_LV){
-      toast(`레벨 10 — 밭을 ${HV_NEED}번씩 수확하면 바깥 땅을 살 수 있어요`);
+      toast(`레벨 ${EXPAND_LV} — 밭을 ${HV_NEED}번씩 수확하면 바깥 땅을 살 수 있어요`);
     }else toast(`레벨 ${G.lv}`);
   }
   refreshExpand(true);
@@ -1867,7 +1952,7 @@ function askExpand(blkId){
     return;
   }
   confirmAsk(b.ko+' 사기',
-    `한 칸 띄운 바깥 땅 <b>${BN*BN}칸</b>을 새로 일굽니다.<br>비용 <b>${NUM(BLOCK_PRICE)} 코인</b> · 보유 ${NUM(G.coins)} 코인<br>바깥 땅 <b>${G.bought.size+1}/${BLOCKS.length}곳</b>`,
+    `밭에 이어 붙는 바깥 땅 <b>${BN*BN}칸</b>을 새로 일굽니다.<br>비용 <b>${NUM(BLOCK_PRICE)} 코인</b> · 보유 ${NUM(G.coins)} 코인<br>바깥 땅 <b>${G.bought.size+1}/${BLOCKS.length}곳</b>`,
     ()=>{
       if(G.coins<BLOCK_PRICE){ warn('코인이 부족해요','꽃을 더 수확해 보세요'); return; }
       const cur=nextBlock();
@@ -1986,7 +2071,7 @@ function drawShop(){
   $('#shopSpecial').innerHTML=G.special.map(id=>itemHTML(byId(id),true)).join('');
   $('#shopStaple').innerHTML=STAPLE.map(id=>itemHTML(byId(id),false)).join('');
 }
-const QTY_MIN=5, QTY_MAX=10;
+const QTY_MIN=5, QTY_MAX=50, QTY_STEP=5;
 let buyState=null;
 function askBuy(id){
   const sp=byId(id);
@@ -2010,6 +2095,7 @@ function renderBuyDialog(){
       <button class="qtyBtn" data-d="-1" ${qty<=QTY_MIN?'disabled':''}>－</button>
       <span class="qtyNum">${qty}개</span>
       <button class="qtyBtn" data-d="1" ${qty>=QTY_MAX?'disabled':''}>＋</button>
+      <button class="qtyMax" data-d="max" ${qty>=QTY_MAX?'disabled':''}>최대</button>
     </div>
     개당 <b>${NUM(sp.R.price)}</b> 코인 · 총 <b>${NUM(total)}</b> 코인<br>보유 코인 ${NUM(G.coins)}`;
 }
@@ -2048,10 +2134,25 @@ function closeCard(){ $('#cardOv').classList.remove('on'); cardBusy=false; setTi
 /* ── dialogue ──────────────────────────────────────────── */
 function say(lines){
   return new Promise(res=>{
-    const d=$('#dlg'), t=$('#dlgText'); let i=0;
-    d.classList.add('on'); t.textContent=lines[0];
-    const h=()=>{ i++; if(i>=lines.length){d.removeEventListener('pointerdown',h);d.classList.remove('on');setTimeout(res,240);} else t.textContent=lines[i]; };
-    d.addEventListener('pointerdown',h);
+    const d=$('#dlg'), t=$('#dlgText'), st=$('#dlgStep'), ok=$('#dlgOk');
+    let i=0;
+    d.style.bottom=($('#panel').offsetHeight+12)+'px';   /* 심기·물주기 영역 위에 띄운다 */
+    const show=()=>{
+      t.textContent=lines[i];
+      st.textContent=lines.length>1?`${i+1} / ${lines.length}`:'';
+      ok.textContent=i>=lines.length-1?'확인':'다음';
+    };
+    const next=()=>{
+      i++;
+      if(i<lines.length){ show(); return; }
+      ok.removeEventListener('click',next);
+      d.removeEventListener('pointerdown',onTap);
+      d.classList.remove('on'); setTimeout(res,240);
+    };
+    const onTap=e=>{ if(!e.target.closest('#dlgOk')) next(); };
+    show(); d.classList.add('on');
+    ok.addEventListener('click',next);
+    d.addEventListener('pointerdown',onTap);
   });
 }
 
@@ -2063,11 +2164,11 @@ const TUT={i:-1,n:0,list:[
   {need:'plant', n:3, tool:'seed', tag:'밭 위를 손가락으로 쓸어보세요 — 지나간 칸마다 씨가 뿌려져요'},
   {tool:'water', ring:'#toolWater', tag:'이제 “물주기”를 골라요'},
   {need:'water', n:3, tool:'water', tag:'드래그 한 번으로 여러 밭에 동시에 물을 줘요'},
-  {say:['물을 줄 때마다 한 단계씩 자라요.','씨앗 → 새싹 → 잎 → 꽃봉오리 → 활짝.','귀한 꽃일수록 물을 더 자주 줘야 해요.']},
+  {say:[`물을 주면 ${GROW_S}초 동안 자라요 — 칸 위 막대가 다 차면 다음 물을 줄 수 있어요.`,'씨앗 → 새싹 → 잎 → 꽃봉오리 → 활짝.','귀한 꽃일수록 물을 더 자주 줘야 해요.']},
   {need:'bloom', n:1, tag:'꽃이 필 때까지 물을 더 주세요'},
   {tool:'cut', ring:'#toolCut', tag:'“수확”을 골라요'},
   {need:'harvest', n:1, tool:'cut', tag:'바닥이 아니라 “핀 꽃” 위를 쓸어야 수확돼요'},
-  {say:['수확하면 코인과 경험치가 쌓여요.','코인으로 상점에서 새 씨앗을 사고,',`레벨이 오르면 밭이 넓어져요 — 10레벨부터는 가진 밭을 ${HV_NEED}번씩 수확할 때마다 바깥 땅을 한 곳씩 살 수 있어요.`,'밭이 화면에 다 안 들어오면 잔디를 드래그해 옮기세요.']},
+  {say:['수확하면 코인과 경험치가 쌓여요.','코인으로 상점에서 새 씨앗을 사고,',`레벨이 오르면 밭이 넓어져요 — ${EXPAND_LV}레벨부터는 가진 밭을 ${HV_NEED}번씩 수확할 때마다 바깥 땅이 한 곳씩 이어 붙어요.`,'밭이 화면에 다 안 들어오면 잔디를 드래그해 옮기세요.']},
   {free:true}
 ]};
 function tutNext(){
@@ -2090,39 +2191,44 @@ function tutHit(ev){
 }
 
 /* ── art ───────────────────────────────────────────────── */
-const SKIN='#F4D6C0', SKIN2='#E5BCA3', HAIR='#4B3138', HAIR2='#6A464C';
+const SKIN='#F7DCC6', SKIN2='#E7C2A6', HAIR='#2F262D', HAIR2='#4B3B44';
 function girlArt(){return `
 <defs>
- <linearGradient id="cardi" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FFFAF6"/><stop offset="100%" stop-color="#F5E5DA"/></linearGradient>
- <linearGradient id="apron" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#F7BFCF"/><stop offset="100%" stop-color="#E79BB2"/></linearGradient>
- <linearGradient id="hairg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="${HAIR2}"/><stop offset="70%" stop-color="${HAIR}"/></linearGradient>
+ <linearGradient id="cardi" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FDF8F2"/><stop offset="100%" stop-color="#EBDDCD"/></linearGradient>
+ <linearGradient id="apron" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#DE9682"/><stop offset="100%" stop-color="#C27366"/></linearGradient>
+ <linearGradient id="denim" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#9DB2CD"/><stop offset="100%" stop-color="#7C94B4"/></linearGradient>
+ <linearGradient id="hairg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="${HAIR2}"/><stop offset="65%" stop-color="${HAIR}"/></linearGradient>
 </defs>
-<ellipse cx="60" cy="184" rx="30" ry="6" fill="#4A5634" opacity=".2"/>
-<circle cx="60" cy="22" r="13" fill="url(#hairg)"/>
-<path d="M47 24 Q60 12 73 24" fill="none" stroke="${HAIR2}" stroke-width="1.4" opacity=".6"/>
-<path d="M42 78 Q60 70 78 78 L86 132 Q60 142 34 132 Z" fill="url(#cardi)" stroke="#EBD5C8" stroke-width="1"/>
-<path d="M34 130 Q60 142 86 130 L92 176 Q60 186 28 176 Z" fill="#DCC9BC"/>
-<path d="M34 130 Q60 142 86 130 L92 176 Q60 186 28 176 Z" fill="url(#apron)" opacity=".55"/>
-<path d="M46 92 Q60 86 74 92 L79 138 Q60 146 41 138 Z" fill="url(#apron)"/>
-<path d="M46 92 Q60 100 74 92" fill="none" stroke="#FFF" stroke-width="1.2" opacity=".5"/>
-<circle cx="60" cy="116" r="2.4" fill="#FFF" opacity=".65"/>
-<path d="M43 82 Q31 104 38 124" fill="none" stroke="url(#cardi)" stroke-width="11" stroke-linecap="round"/>
-<path d="M77 82 Q89 104 82 124" fill="none" stroke="url(#cardi)" stroke-width="11" stroke-linecap="round"/>
-<circle cx="38" cy="127" r="5" fill="${SKIN}"/><circle cx="82" cy="127" r="5" fill="${SKIN}"/>
-<path d="M54 66 h12 v10 h-12 z" fill="${SKIN2}"/>
-<ellipse cx="60" cy="46" rx="20.5" ry="22" fill="${SKIN}"/>
-<path d="M40 46 Q38 20 60 18 Q82 20 80 46 Q78 32 60 30 Q42 32 40 46 Z" fill="url(#hairg)"/>
-<path d="M40 44 Q36 62 39 74 Q45 60 42 44 Z" fill="url(#hairg)"/>
-<path d="M80 44 Q84 62 81 74 Q75 60 78 44 Z" fill="url(#hairg)"/>
-<ellipse cx="46.5" cy="52" rx="4.6" ry="3.2" fill="#F4A6B4" opacity=".55"/>
-<ellipse cx="73.5" cy="52" rx="4.6" ry="3.2" fill="#F4A6B4" opacity=".55"/>
-<path d="M50 47.5 q3.4 -3.4 6.8 0" fill="none" stroke="#3E2A30" stroke-width="2.1" stroke-linecap="round"/>
-<path d="M63.2 47.5 q3.4 -3.4 6.8 0" fill="none" stroke="#3E2A30" stroke-width="2.1" stroke-linecap="round"/>
-<path d="M56.6 57.5 q3.4 3 6.8 0" fill="none" stroke="#C4707E" stroke-width="1.7" stroke-linecap="round"/>
-<path d="M49 40 q4 -2.4 8 -.6" fill="none" stroke="${HAIR}" stroke-width="1.5" stroke-linecap="round"/>
-<path d="M63 39.4 q4 -1.8 8 .6" fill="none" stroke="${HAIR}" stroke-width="1.5" stroke-linecap="round"/>
-<g transform="translate(80 30) scale(.55)"><circle r="4" fill="#F6D98C"/>
- <g fill="#F4A9BE">${[0,72,144,216,288].map(a=>`<ellipse cx="0" cy="-9" rx="4.4" ry="7" transform="rotate(${a})"/>`).join('')}</g></g>`;}
+<ellipse cx="60" cy="183" rx="26" ry="5.5" fill="#4A5634" opacity=".18"/>
+<path d="M37 40 Q32 74 39 92 L81 92 Q88 74 83 40 Z" fill="url(#hairg)"/>
+<path d="M46 124 L43 163 L58 163 L60 133 L62 163 L77 163 L74 124 Z" fill="url(#denim)"/>
+<path d="M46 124 L74 124 L74.6 131 Q60 135 45.4 131 Z" fill="#8AA1BE" opacity=".5"/>
+<rect x="40.5" y="161" width="19" height="13" rx="5.5" fill="#FBF7F1" stroke="#DCD0C1" stroke-width="1"/>
+<rect x="60.5" y="161" width="19" height="13" rx="5.5" fill="#FBF7F1" stroke="#DCD0C1" stroke-width="1"/>
+<path d="M41 80 Q60 72 79 80 L85 129 Q60 137 35 129 Z" fill="url(#cardi)" stroke="#E2D3C2" stroke-width="1"/>
+<path d="M47 97 L73 97 L76.5 131 Q60 137 43.5 131 Z" fill="url(#apron)"/>
+<path d="M51 97 L55 79 M69 97 L65 79" fill="none" stroke="#C27366" stroke-width="3.2" stroke-linecap="round"/>
+<circle cx="60" cy="115" r="2.6" fill="#FFF" opacity=".45"/>
+<path d="M42 84 Q32 104 36.5 122" fill="none" stroke="url(#cardi)" stroke-width="12" stroke-linecap="round"/>
+<path d="M78 84 Q88 104 83.5 122" fill="none" stroke="url(#cardi)" stroke-width="12" stroke-linecap="round"/>
+<circle cx="36.5" cy="126" r="5.2" fill="${SKIN}"/><circle cx="83.5" cy="126" r="5.2" fill="${SKIN}"/>
+<path d="M54 62 h12 v14 h-12 z" fill="${SKIN2}"/>
+<ellipse cx="60" cy="45" rx="19.5" ry="21" fill="${SKIN}"/>
+<path d="M40.5 47 Q38 21 60 18.5 Q82 21 79.5 47 Q75.5 30 60 28 Q44.5 30 40.5 47 Z" fill="url(#hairg)"/>
+<path d="M59 28 Q50 31 45.5 47 Q42.5 33 51 25.5 Z" fill="url(#hairg)"/>
+<path d="M61 28 Q70 31 74.5 47 Q77.5 33 69 25.5 Z" fill="url(#hairg)"/>
+<path d="M40.5 45 Q36.5 66 40 84 Q46 65 43.5 45 Z" fill="url(#hairg)"/>
+<path d="M79.5 45 Q83.5 66 80 84 Q74 65 76.5 45 Z" fill="url(#hairg)"/>
+<ellipse cx="47.8" cy="51.5" rx="4.4" ry="2.9" fill="#F19FA8" opacity=".45"/>
+<ellipse cx="72.2" cy="51.5" rx="4.4" ry="2.9" fill="#F19FA8" opacity=".45"/>
+<ellipse cx="53" cy="47.4" rx="2.7" ry="3.5" fill="#2F262D"/>
+<ellipse cx="67" cy="47.4" rx="2.7" ry="3.5" fill="#2F262D"/>
+<circle cx="54.1" cy="46" r=".95" fill="#FFF"/><circle cx="68.1" cy="46" r=".95" fill="#FFF"/>
+<path d="M49.2 40.6 q3.9 -2.1 7.6 -.5" fill="none" stroke="${HAIR2}" stroke-width="1.6" stroke-linecap="round"/>
+<path d="M63.2 40.1 q3.7 -1.6 7.6 .5" fill="none" stroke="${HAIR2}" stroke-width="1.6" stroke-linecap="round"/>
+<path d="M57 55.4 q3 2.6 6 0" fill="none" stroke="#C1707C" stroke-width="1.7" stroke-linecap="round"/>
+<rect x="70" y="32.5" width="10" height="3.4" rx="1.7" fill="#E5B45E" transform="rotate(-20 75 34.2)"/>
+<rect x="70" y="37.4" width="7.6" height="3" rx="1.5" fill="#E5B45E" opacity=".75" transform="rotate(-20 73.8 38.9)"/>`;}
 function canArt(){return `
 <defs><linearGradient id="cg" x1="0" y1="0" x2="0" y2="1">
  <stop offset="0%" stop-color="#DCEFF0"/><stop offset="55%" stop-color="#B8DDE0"/><stop offset="100%" stop-color="#8FC3C8"/></linearGradient></defs>
@@ -2208,8 +2314,9 @@ function boot(){
   $('#cfNo').onclick=()=>{$('#confirmOv').classList.remove('on');cfYes=null;buyState=null;};
   $('#cfYes').onclick=()=>{$('#confirmOv').classList.remove('on');const f=cfYes;cfYes=null;if(f)f();buyState=null;};
   $('#confirmOv').addEventListener('click',e=>{
-    const b=e.target.closest('.qtyBtn'); if(!b||!buyState) return;
-    buyState.qty=clamp(buyState.qty+ +b.dataset.d,QTY_MIN,QTY_MAX);
+    const b=e.target.closest('.qtyBtn,.qtyMax'); if(!b||!buyState) return;
+    buyState.qty=b.dataset.d==='max' ? QTY_MAX
+               : clamp(buyState.qty+ +b.dataset.d*QTY_STEP,QTY_MIN,QTY_MAX);
     renderBuyDialog();
   });
 
