@@ -853,7 +853,9 @@ const pickTile=(wx,wy)=>{const u=wx/HW,v=wy/HH;return {c:Math.round((u+v)/2),r:M
 
 /* ── land ──────────────────────────────────────────────── */
 const MAIN=8, EXPAND_LV=9, BN=4, BLOCK_PRICE=1500, HV_NEED=10;
-const GROW_S=5;                     /* 물을 준 뒤 자라는 데 걸리는 시간(초) */
+/* ── 레벨 테스트용 임시 수치 — 테스트가 끝나면 주석의 원래 값으로 되돌린다 ──
+   GROW_S 5 · WMAX 240 · 물 회복 17/초 · 시작 코인 300                        */
+const GROW_S=1;                     /* 물을 준 뒤 자라는 데 걸리는 시간(초) */
 /* 기존 밭에 바로 이어 붙는 바깥 땅 10곳 — 가까운 곳부터 차례로 하나씩 열린다 */
 const BLOCKS=[
   {id:'N', ko:'북쪽 밭',   r0:-4, c0:0},
@@ -869,7 +871,7 @@ const BLOCKS=[
 ];
 const PLOTS=[], PMAP=new Map();
 function addPlot(r,c,blk){
-  const p={r,c,blk,sp:null,stage:0,wc:0,wet:0,pop:0,born:0,hv:0,cd:0,deco:null};
+  const p={r,c,blk,sp:null,stage:0,wc:0,wet:0,pop:0,born:0,hv:0,cd:0,deco:null,fdir:0};
   PLOTS.push(p); PMAP.set(r+','+c,p);
 }
 for(let r=0;r<MAIN;r++) for(let c=0;c<MAIN;c++) addPlot(r,c,null);
@@ -879,10 +881,10 @@ const ORDER=PLOTS.slice().sort((a,b)=>(a.r+a.c)-(b.r+b.c));
 /* ── state ─────────────────────────────────────────────── */
 const SIZE=[4,4,5,6,7,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8];
 const XPNEED=[0,4,7,11,16,22,30,40,52,66,82,100,120,142,166,192,220,250,282,316,1e9];
-const WCOST=5, WMAX=240, LOWW=.10;
+const WCOST=5, WMAX=480, LOWW=.10, WGAIN=85;
 const ROT_MS=10*60*1000;
 const G={
-  lv:1, xp:0, coins:300, water:WMAX, dex:[], inv:{}, bought:new Set(),
+  lv:1, xp:0, coins:99000, water:WMAX, dex:[], inv:{}, bought:new Set(),
   cam:{x:0,y:0}, z:1, tool:'water', seed:null, started:false,
   special:[], rotAt:0
 };
@@ -916,7 +918,7 @@ const canResume=()=> _hasSave||TUT.i>=0;
 function snapshot(){
   const plots=[];
   for(const p of PLOTS) if(p.sp||p.hv||p.deco)
-    plots.push([p.r,p.c,p.sp?p.sp.id:'',p.stage,p.wc,p.hv,p.cd,p.deco||'']);
+    plots.push([p.r,p.c,p.sp?p.sp.id:'',p.stage,p.wc,p.hv,p.cd,p.deco||'',p.fdir|0]);
   return {v:2, lv:G.lv, xp:G.xp, coins:G.coins, water:G.water, dex:G.dex, inv:G.inv,
     bought:[...G.bought], seed:G.seed?G.seed.id:null, tool:G.tool, z:G.z,
     cam:{x:G.cam.x,y:G.cam.y}, special:G.special, rotAt:G.rotAt, tut:TUT.i, plots};
@@ -951,7 +953,7 @@ function applySave(d){
   (d.plots||[]).forEach(a=>{
     const p=PMAP.get(a[0]+','+a[1]); if(!p) return;
     p.sp=byId(a[2])||null; p.stage=p.sp?(a[3]||0):0; p.wc=a[4]||0; p.hv=a[5]||0;
-    p.cd=p.sp?(a[6]||0):0; p.deco=(a[7]==='path'||a[7]==='fence')?a[7]:null;
+    p.cd=p.sp?(a[6]||0):0; p.deco=(a[7]==='path'||a[7]==='fence')?a[7]:null; p.fdir=a[8]?1:0;
   });
   TUT.i=d.tut===undefined?-1:d.tut;
 }
@@ -1238,19 +1240,23 @@ function rrect(g,x,y,w,h,r){
   g.moveTo(x+rr,y); g.arcTo(x+w,y,x+w,y+h,rr); g.arcTo(x+w,y+h,x,y+h,rr);
   g.arcTo(x,y+h,x,y,rr); g.arcTo(x,y,x+w,y,rr); g.closePath();
 }
-function drawFence(g,x,y,BW){
-  const px=BW*.60, top=y-21;
-  g.save();
-  shadow(g,x,y+3,BW*.72,5,.14);
-  g.strokeStyle='#C39A6A'; g.lineWidth=3.2; g.lineCap='round';
-  g.beginPath(); g.moveTo(x-px,top+7); g.lineTo(x+px,top+7); g.stroke();
-  g.beginPath(); g.moveTo(x-px,top+15); g.lineTo(x+px,top+15); g.stroke();
-  g.strokeStyle='#A87C50'; g.lineWidth=4.2;
-  for(const s of [-1,1]){
-    g.beginPath(); g.moveTo(x+px*s,top); g.lineTo(x+px*s,y+1); g.stroke();
+/* 울타리는 밭의 두 축 중 하나를 따라 선다. 칸 경계까지 뻗어서
+   옆칸 울타리와 기둥이 맞물린다. dir 0 = ↘(열 방향) · 1 = ↙(행 방향) */
+const FENCE_H=30;
+function drawFence(g,x,y,dir){
+  const hx=HW*.5, hy=HH*.5;
+  const a={x:x-(dir?-hx:hx), y:y-hy}, b={x:x+(dir?-hx:hx), y:y+hy};
+  g.save(); g.lineCap='round';
+  g.strokeStyle='rgba(74,86,52,.20)'; g.lineWidth=5;
+  g.beginPath(); g.moveTo(a.x,a.y+2); g.lineTo(b.x,b.y+2); g.stroke();
+  g.strokeStyle='#C89E6C'; g.lineWidth=3.6;
+  for(const k of [.36,.72]){
+    g.beginPath(); g.moveTo(a.x,a.y-FENCE_H*k); g.lineTo(b.x,b.y-FENCE_H*k); g.stroke();
   }
+  g.strokeStyle='#A87C50'; g.lineWidth=4.6;
+  for(const q of [a,b]){ g.beginPath(); g.moveTo(q.x,q.y+1); g.lineTo(q.x,q.y-FENCE_H); g.stroke(); }
   g.fillStyle='#8A6038';
-  for(const s of [-1,1]){ g.beginPath(); g.ellipse(x+px*s,top,2.6,1.7,0,0,6.2832); g.fill(); }
+  for(const q of [a,b]){ g.beginPath(); g.ellipse(q.x,q.y-FENCE_H,3,2,0,0,6.2832); g.fill(); }
   g.restore();
 }
 /* 물을 준 뒤 자라는 동안 차오르는 막대 */
@@ -1315,7 +1321,7 @@ function drawPlot(g,p){
     }
     g.strokeStyle='rgba(255,236,208,.40)'; g.lineWidth=1.3; diamond(g,x,y,BW,BH); g.stroke();
   }
-  if(deco==='fence') drawFence(g,x,y,BW);
+  if(deco==='fence') drawFence(g,x,y,p.fdir|0);
 
   if(p.wet>0){
     g.save(); g.globalAlpha=Math.min(p.wet,1)*.34;
@@ -1346,7 +1352,7 @@ function drawPlot(g,p){
   }
   if(HOVER===p&&G.tool==='cut'&&p.stage>=4){
     g.strokeStyle='rgba(255,255,255,.9)'; g.lineWidth=2;
-    g.beginPath(); g.ellipse(x,y-STEM_H[4]-6,28,24,0,0,6.2832); g.stroke();
+    g.beginPath(); g.ellipse(x,y-12,HW,HH+6,0,0,6.2832); g.stroke();
   }
   g.restore();
 }
@@ -1372,8 +1378,8 @@ function mushUnder(px,py){
   const w=toWorld(px,py); let best=null;
   for(const p of ORDER){
     if(!own(p)||!p.sp||p.stage<4) continue;
-    const cx=tileX(p.r,p.c), cy=tileY(p.r,p.c)-STEM_H[4]-6;
-    const dx=(w.x-cx)/30, dy=(w.y-cy)/27;
+    const cx=tileX(p.r,p.c), cy=tileY(p.r,p.c)-12;
+    const dx=(w.x-cx)/HW, dy=(w.y-cy)/(HH+6);
     if(dx*dx+dy*dy<=1) best=p;               // later in ORDER = drawn in front
   }
   return best;
@@ -1477,8 +1483,13 @@ function doPlant(p,silent){
 }
 function doDeco(p,kind){
   if(p.sp) return false;                   /* 심어둔 버섯은 지키고 빈 칸만 바꾼다 */
-  if(p.deco===kind) return false;
-  p.deco=kind; p.born=1; puff(p);
+  if(p.deco===kind){
+    if(kind!=='fence') return false;
+    p.fdir=p.fdir?0:1;                     /* 울타리를 한 번 더 누르면 방향이 돌아간다 */
+    hud(); return true;
+  }
+  p.deco=kind; if(kind==='fence') p.fdir=p.fdir|0;
+  p.born=1; puff(p);
   hud(); return true;
 }
 function doWater(p,silent){
@@ -1530,7 +1541,7 @@ function batchWater(){
 }
 let _wt=0;
 function regen(dt){
-  if(G.water<WMAX){ G.water=Math.min(WMAX,G.water+dt*17); _wt+=dt; if(_wt>.25){_wt=0;hudWater();} }
+  if(G.water<WMAX){ G.water=Math.min(WMAX,G.water+dt*WGAIN); _wt+=dt; if(_wt>.25){_wt=0;hudWater();} }
 }
 function checkLevel(){
   while(G.xp>=XPNEED[Math.min(G.lv,XPNEED.length-1)] && G.lv<20){
